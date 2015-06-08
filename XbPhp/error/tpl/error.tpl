@@ -33,7 +33,7 @@ h1{ font-size: 28px; line-height: 48px; }
 		</div>
 	</div>
 	<div class="copyright">
-	<p><a title="官方网站" href="javascript:;">XbPhp</a><sup></sup>官方QQ群:114252528</p>
+	<p><a title="官方网站" href="http://xbphp.nmfox.com">XbPhp</a><sup></sup>官方QQ群:114252528</p>
 	</div>
 </div>
 </body>

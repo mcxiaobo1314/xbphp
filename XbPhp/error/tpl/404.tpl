@@ -21,7 +21,7 @@ body{ background: #fff; font-family: '微软雅黑'; color: #333; font-size: 16p
 	</div>
 	<strong>各位帅哥美女，你访问的该页面被删了或出错了</strong>	
 	<div class="content">
-	请联系本站管理员! by:XbPhp。官方QQ群：114252528
+	请联系本站管理员! by:<a href="http://xbphp.nmfox.com/">XbPhp</a>。官方QQ群：114252528
 	</div>
 </div>
 </body>
