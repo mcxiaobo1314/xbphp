@@ -1,0 +1,5 @@
+<IfModule rewrite_module>
+	RewriteEngine on
+    RewriteRule    ^$    home/    [L]
+    RewriteRule    ^(.*) home/$1    [L]
+</IfModule>

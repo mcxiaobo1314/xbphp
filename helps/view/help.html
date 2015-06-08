@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>目录结构说明--XbPhp框架--争取智能化的框架,执行效率高,简单上手</title>
+	<meta name="Keywords" content="XbPhp,XbPhp框架,PHP框架,PHP智能框架,跨平台框架,跨环境框架" />
+	<meta name="Description" content="XbPhp框架的宗旨是实现智能化，兼容性强,简单上手,不一样的文件缓存机制" />
+	<style>
+		html,body,ul,li,a{
+			margin: 0;
+			padding:0;
+		}
+		body{
+			background: #fff;
+		}
+		ul,li {
+			list-style-type: none;
+			height: 30px;
+			font-size: 14px;
+		}
+		ul {
+			width: 1024px;
+			margin-left: 20px;
+		}
+		h2 { 
+			text-indent: 35px;
+		}
+		#jianjie {
+			width:1024px;
+			font-size: 16px;
+			text-indent: 20px;
+			margin-bottom: 5px;
+			border-bottom: 1px dashed #ccc;
+		}
+		.gen {
+			width:auto;
+			height: 30px; 
+			line-height: 30px;
+			border-bottom: 1px dashed #ccc;
+		}
+		.gen a{
+			text-decoration: none;
+		}
+		.gen_1 {
+			height: 30px; 
+			line-height: 30px;
+			text-indent:20px;
+			border-bottom: 1px dashed #ccc;
+		}
+		.gen_2 {
+			height: 30px; 
+			line-height: 30px;
+			text-indent:40px;
+			border-bottom: 1px dashed #ccc;
+		}
+	</style>
+</head>
+<body>
+	<h1>XbPhp目录结构(伪静态规则是apache,如iis,nginx的伪静态规则需要自己重写)</h1>
+	<h2>作者:小波(QQ:574360586)</h2>
+	<div id="jianjie">
+		<p>这是一个结合Cakephp+Thinkphp+smarty的写法的框架,目前还有很多功能未完善。。需要大家多多帮忙提出完善建议。小波IT社区交流群:114252528</p>
+		<P>语法详情请看/home/controller/indexcontroller. php文件与/home/model/BcWzModel.php文件,至于Model的SQL语句写法问题，就是不需要加载表名，如:$this->Test->find()在控制器是这么写的，在Model里面则变成$this->find()</p>
+		<p>修改/XbPhp/XbPhp/index.php默认目录文件名,还要修改.htaccess里面默认目录文件名</p>
+		<p>非常感谢TP框架让我实现了智能化的加载目录文件</p>
+	</div>
+	<ul>
+		<li class="gen">admin ---是后台目录
+			<li class="gen_1">|-controller ---是放控制器文件
+				<li class="gen_2">|-AppController.php -- 公共控制器文件(所有新建的控制器文件必须要继承他)</li>
+			</li>
+			<li class="gen_1">|-databases ---是放数据库配置和配置文件
+				<li class="gen_2">|-config.php -- 数据库配置文件</li>
+				<li class="gen_2">|-configure.inc.php -- 网站配置文件</li>
+				<li class="gen_2">|-defined.php -- 定義全局變量或常量</li>
+			</li>
+			<li class="gen_1">|-model ---是放模型文件
+				<li class="gen_2">|-AppModel.php -- 公共模型文件,新创建的模型文件必须要继承它</li>
+			</li>
+			<li class="gen_1">|-view ---是放视图文件</li>
+			<li class="gen_1">|-webroot ---是放CSS,JS,IMAGES等根目录文件
+				<li class="gen_2">|-.htaccess -- apache伪静态文件</li>
+				<li class="gen_2">|-index.php -- 默认首页</li>
+			</li>
+			<li class="gen_1">|-.htaccess -- apache伪静态文件</li>
+			<li class="gen_1">|-index.php -- 默认首页</li>
+		</li>
+		<li class="gen">home ---是前端目录(结构与admin目录文件结构一样)</li>
+		<li class="gen">helps ---是XbPhp帮助文档(结构与admin目录文件结构一样)</li>
+		<li class="gen">vendors--- 是专门放第三方插件与代码
+			<li class="gen_2">|-Smarty -- 第三方模版引擎</li>
+		</li>
+		<li class="gen">XbPhp --- 是核心架构文件
+				<li class="gen_1">|-cache ---缓存目录
+					<li class="gen_2">|-Cache.class.php -- 缓存类文件</li>
+				</li>
+				<li class="gen_1">|-commn ---方法目录
+					<li class="gen_2">|-functions.php -- 框架的方法全部在这里</li>
+				</li>
+				<li class="gen_1">|-Component ---组件目录(也可以自定义组件,都放在这里面)
+					<li class="gen_2">|-CookieComponent.php -- cookie组件</li>
+					<li class="gen_2">|-SessionComponent.php -- session组件</li>
+					<li class="gen_2">|-MailComponent.php -- 邮箱组件</li>
+				</li>
+				<li class="gen_1">|-conf ---系统默认的配置文件(如果HOME，admin目录有次配置文件，则不加载这里)
+					<li class="gen_2">|-configure.inc.php -- 网站配置文件</li>
+				</li>
+				<li class="gen_1">|-controller ---控制器目录
+					<li class="gen_2">|-Controller.php -- 控制器文件</li>
+				</li>
+				<li class="gen_1">|-error ---错误目录
+					<li class="gen_2">|-tpl -- 错误模版目录</li>
+					<li class="gen_2">|-Error.php -- 错误类文件</li>
+				</li>
+				<li class="gen_1">|-model ---模型目录
+					<li class="gen_2">|-Model.php -- 数据库操作文件</li>
+				</li>
+				<li class="gen_1">|-view ---视图目录
+					<li class="gen_2">|-view.php -- 自定义的小型模版引擎文件</li>
+				</li>
+				<li class="gen_1">|-App.class.php ---路由与加载类文件</li>
+				<li class="gen_1">|-db.class.php ---数据库连接类文件</li>
+				<li class="gen_1">|-Socket.class.php ---Socket类文件</li>
+				<li class="gen_1">|-Autoloads.php ---自動加载非静态类文件</li>
+				<li class="gen_1">|-index.php ---框架入口文件(修改默認根目錄)</li>
+		</li>
+		<li class="gen">index.php --- 首頁</li>
+	</ul>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?d90142e6c6fdb2e0d7cd5790a4abd119";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</body>
+</html>

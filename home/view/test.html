@@ -1,0 +1,55 @@
+<{$arr['av']}>
+<{foreach $arr as $key=>$val}>
+<div><{$key}>---<{$val}></div>
+<{/foreach}>
+<{include file="1.html"}>
+<{include file="1.html"}>
+<br>
+<{if $arr['av'] == 'abc21'}>
+这是判断数组av
+<{else}>
+	<{if $a == 2}>
+	这是判断数组av1111
+	<{else}>
+	这是判断数组av2222
+	<{/if}>
+<{/if}>
+
+<br>
+<{include file="1.html"}>
+<br>
+a是<{$a}>
+<br>
+<{$b}>
+<br>
+<{if $a > 2}>
+23232
+<{else}>
+444444
+<{/if}>
+<br>
+<{if $a == 1}>
+这是<{$a}>变量数据：
+<{foreach $varr as $key=>$val}>
+	<div><{$val['b']}>-----<{$val['c']}></div>
+<{/foreach}>
+结束
+
+<{else}>
+321
+<{/if}>
+<br>
+<{$b}>
+<br>
+<{foreach $arr as $key=>$val}>
+<div><{$key}>---<{$val}></div>
+<{/foreach}>
+<div>113333</div>
+<div>11</div>
+<div>11</div>
+<div>11</div>
+<{foreach $earr as $key => $value}>
+	<{foreach $value as $k => $v }>
+		<{$v}><br>
+	<{/foreach}>
+<{/foreach}>

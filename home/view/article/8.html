@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>XbPhp教新手如何快速搭建php环境---XbPhp框架--争取智能化的框架,执行效率高,简单上手</title>
+<meta name="keywords" content="XbPhp,XbPhp框架,PHP框架,PHP智能框架,跨平台框架" />
+<meta name="description" content="XbPhp框架的宗旨是实现智能化，兼容性强,简单上手,不一样的文件缓存机制" />
+<link rel="stylesheet" type="text/css" href="<{$herf}>css/style.css" />
+<style>
+.head h1 a { 
+	width: 260px; 
+	height: 95px; 
+	background-image: url(<{$herf}>images/logo.jpg); 
+	text-indent: -9999px; 
+	overflow: hidden;
+}
+.body .content ul p {
+	font-size: 18px;
+}
+</style>
+<{include file="header.html"}>
+<div class="body">
+	<div class="content">
+		<ul>
+			<p>很多新手就会问,怎么搭建PHP环境..我才刚学PHP,xbphp首选为您推荐款集成环境,名字叫:wamp</p>
+			<p>wamp在那里下载？百度WAMP下载..下载完了。。一键安装好了之后,启动</p>
+			<p>怎么配置? 对准WAMP的小图标左键,然后选择Apache->httpd.conf,找到下面的该代码前面的#去掉</p>
+			<p style="color:red">LoadModule rewrite_module modules/mod_rewrite.so</p>
+			<p>伪静态就设置好了!!!</p>
+			<p>然后继续左键wamp的小图表,然后选择PHP->php.ini,然后搜索extension=php_curl.dll,选择你要开启的PHP的扩展,只需要去掉前面的分号</p>
+			<p>这里xbphp只推荐 xbphp需要开启的扩展有</p>
+			<p>
+				extension=php_curl.dll<br>
+				extension=php_mbstring.dll<br>
+				extension=php_mysql.dll<br>
+				extension=php_pdo_mysql.dll<br>
+				extension=php_sockets.dll<br>
+				extension=php_xmlrpc.dll<br>
+				extension=php_xsl.dll<br>
+			</p>
+			<p>保存好了吗?然后我们在wamp小图标左鍵,然后点击Restart All Services,这样就好了</p>
+			<p>然后我们下载xbphp把解压到/wamp/www/里面去</p>
+			<p>这样我们在访问url:http://localhost/xbphp/<br>
+				这样就能访问了
+			</p>
+		</ul>
+	</div>
+</div>
+
+<{include file="footer.html"}>
+</body>
+</html>

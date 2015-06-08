@@ -1,0 +1,106 @@
+body, div, h1, h2, h3, h4, h5, h6, p, ul, li { margin: 0; padding: 0;}
+body { font: 12px/1.33 "Microsoft Yahei",tahoma,"宋体",sans-serif; background: #fff;}
+.content { 
+	width: 100%; 
+	margin: 0 auto;
+}
+.head {
+	width: 100%;
+	height: 95px; 
+	background-color: #282828;
+}
+.head .content {
+	width: 100%; 
+	height: 95px;
+}
+.head h1, .head h1 a { 
+	float: left;
+}
+.head h1 { 
+	text-indent: 50px;
+}
+
+.head p { 
+	float: right; 
+	margin: 38px 0px 0 0; 
+	font-size: 14px; 
+	color: #fff;
+}
+.head p a { 
+	margin: 0 10px; 
+	color: #fff; 
+	text-decoration: none;
+}
+.body { 
+	height: 100%; 
+	margin-bottom: 140px;
+}
+.body #guanggao {
+	width: 100%;
+}
+.body #guanggao table{
+	padding: 0 0 0 50px;
+}
+#share {
+	padding-left: 50px;
+}
+
+.body .content { 
+	position: relative; 
+	height: 100%;
+}
+.body .content h1 {
+	padding-top: 10px;
+	text-indent: 50px; 
+
+}
+.body .content ul {
+	padding:30px 0 0 50px;
+}
+
+.body .content ul li {
+	list-style-type: none;
+	font-family: "Microsoft Yahei";
+	font-size: 24px;
+	border-bottom: 1px solid #ccc;
+}
+
+.body .content #link {
+	list-style-type: none;
+	font-family: "Microsoft Yahei";
+	font-size: 24px;
+	padding-top: 15px;
+	text-indent: 50px;
+}
+
+.body .content #link #qun {
+	padding-top: 30px;
+}
+
+.body .content #link #down {
+	padding-top: 30px;
+	font-size: 28px;
+}
+.body .content #link #down a {
+	text-decoration: none;
+	color: red;
+	font-size: 30px;	
+}
+
+td {	
+	font-size: 12px;
+	line-height:160%;
+}
+
+.footer { 
+	position: fixed;
+	bottom: 0;
+	width:100%;
+	height: 100px;
+	/*padding: 30px 0; */
+	border-top: 1px solid #bebdbd; 
+	line-height: 28px; 
+	text-align: center; 
+	color: #9a9b9b; 
+	background-color: #d3d3d4;
+}

@@ -1,0 +1,13 @@
+
+/* Hover effect */
+a, .layout-box, .tags a, .box1, .imgs img, .box1 h3, .notify span, .newsletter-button, .price-list-1 li, .post-holder .entry-title a, .categories ul li a, .sf-menu li, input, .pagination ul li a:link, .pagination ul li a:visited { -webkit-transition:all 0.5s ease; -moz-transition:all 0.5s ease; -o-transition:all 0.5s ease; transition:all 0.5s ease; behavior: url(js/PIE.htc) }
+
+/* Text Color */
+.archive a:link, .archive a:visited, .about-brief, ul.tweet_list li { color: #ccc; }
+
+ul.tweet_list li a:link, ul.tweet_list li a:visited { color: #eee; }
+
+.archive ul li { color: #777; }
+
+a:hover, .archive a:hover, .text-color-red, .list-style-1 li a:hover, .list-style li a:hover, .slide-text-2 a, .breadcrumbs a:hover, .list-1 li a:hover, .link-name, .link-1:hover, .post-meta a, .post-holder .entry-title a:hover, .categories ul li a:hover { color: #CA4333; }
+

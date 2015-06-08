@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>XbPhp框架--争取智能化的框架,执行效率高,简单上手</title>
+<meta name="keywords" content="XbPhp,XbPhp框架,PHP框架,PHP智能框架,跨平台框架" />
+<meta name="description" content="XbPhp框架的宗旨是实现智能化，兼容性强,简单上手,不一样的文件缓存机制" />
+<link rel="stylesheet" type="text/css" href="<{$herf}>css/style.css" />
+<style>
+.head h1 a { 
+	width: 260px; 
+	height: 95px; 
+	background-image: url(<{$herf}>images/logo.jpg); 
+	text-indent: -9999px; 
+	overflow: hidden;
+}
+.body .content ul li {
+	border-bottom: none;
+}
+.dotline{background-image:url(<{$herf}>images/dot_line.gif);background-repeat: repeat-x;background-position: bottom;}
+#rand {
+	text-decoration: none;
+	color: red;
+}
+.body .content #link #down a {
+	font-size: 18px;
+}
+</style>
+</head>
+
+<body>
+<{include file="header.html"}>
+<div class="body">
+	<div id="guanggao">
+		<table width="100%" border="0" cellspacing="2" cellpadding="0">
+		  <tr>
+		    <td width="4%" height="40" align="right" class="dotline"><img src="<{$herf}>images/ico_q.gif" width="100%" height="29"></td>
+		    <td width="96%" height="40" class="dotline"><a onClick=javascript:ShowFLT(1) href="javascript:void(null)">1.XbPhp框架特色是什么？</a></td>
+		  </tr>
+		  <tr id=LM1 style="DISPLAY: none">
+		    <td height="5%" align="right" bgcolor="#f5f9ed"><img src="<{$herf}>images/ico_a.gif" width="14" height="14" hspace="5"></td>
+		    <td height="30" bgcolor="#f5f9ed">XbPhp框架特色是智能化, 主要针对可以自动获取的属性,一律改成自动获取,如新建目录,无需定义目录常量,可以通过URL智能获取;还有路由在跨平台与跨环境都自动获取,无需修改配置。</td>
+		  </tr>
+		 	<tr>
+		    <td width="4%" height="40" align="right" class="dotline"><img src="<{$herf}>images/ico_q.gif" width="100%" height="29"></td>
+		    <td width="96%" height="40" class="dotline"><a onClick=javascript:ShowFLT(2) href="javascript:void(null)">2.XbPhp框架为什么封装更常用的功能？</a></td>
+		  </tr>
+		  <tr id=LM2 style="DISPLAY: none">
+		    <td height="5%" align="right" bgcolor="#f5f9ed"><img src="<{$herf}>images/ico_a.gif" width="14" height="14" hspace="5"></td>
+		    <td height="30" bgcolor="#f5f9ed">XbPhp框架之所以不封装更多常用的功能,是没必须要封装太多功能,因为每个站点需要的功能都不一样,所以封装常用的功能要花费太多时间,还不如把一些常用的函数封装出来。</td>
+		  </tr>
+		</table>
+		<div class="bdsharebuttonbox" id="share"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" title="分享到QQ空间" href="#" data-cmd="qzone"></a><a class="bds_tsina" title="分享到新浪微博" href="#" data-cmd="tsina"></a><a class="bds_tqq" title="分享到腾讯微博" href="#" data-cmd="tqq"></a><a class="bds_renren" title="分享到人人网" href="#" data-cmd="renren"></a><a class="bds_weixin" title="分享到微信" href="#" data-cmd="weixin"></a></div>
+	</div>
+
+	<div class="content">
+		<ul>
+			<li>1.实现智能化目录加载，无需定义目录</li>
+			<li>2.[<strong>XbPhp特色写法</strong>]实现强大的定时文件缓存机制</li>
+			<li>3.自带了小型模版引擎机制</li>
+			<li>4.结合了CakePHP+ThinkPHP的写法</li>
+			<li>5.实现自动跨环境与跨平台的兼容,无需在修改配置</li>
+		</ul>
+		<div style="text-indent:50px; width:auto; height:30px; border:1px dashed red; margin-top:10px;line-height:30px; font-size:24px;">随机推荐:<a href="<{$herfs}>Index/article/<{$num}>.html" id="rand" target="_blank"><{$randtitle}></a></div>
+		<div id="link">
+			<p>linux apache 环境演示地址: <a href="http://php.nmfox.com/" rel="friend" target="_blank">点击演示</a></p>
+			<p>linux nginx 环境演示地址: <a href="http://xbphp.nmfox.com/" rel="friend" target="_blank">点击演示</a></p>
+			<p id="qun">小波IT社区交流群号:114252528</p>
+			<p id="down">XbPhp下载地址:
+			<a href="http://pan.baidu.com/s/1ntBTSsp" target="_blank" rel="nofollow">百度网盘(实时更新)(2015.06.05->注:修改模版里面引入的文件不编译的BUG)</a> | 
+			<a href="http://down.chinaz.com/soft/37031.htm" target="_blank" rel="nofollow">站长之家(一个月更新一次)</a>
+			</p>
+			
+		</div>
+	</div>
+
+</div>
+<{include file="footer.html"}>
+<script language=JavaScript src="<{$herf}>js/js.js"></script>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"XbPhp框架的宗旨是实现智能化，兼容性强,简单上手,不一样的文件缓存机制","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+</body>
+</html>
