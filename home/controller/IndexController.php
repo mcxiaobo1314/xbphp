@@ -13,7 +13,7 @@ class IndexController extends AppController{
 	 * 加载组件:去AppController.php里面进行加载,如果单独在某个控制器加载组件会覆盖AppController
 	 * 里面公用加载组件
 	 */
-	public $uses = array('BcWz','BcTest','BcNav');
+	//public $uses = array('BcWz','BcTest','BcNav');
 
 
 	//要自动初始化函数,必须在构造函数里面写上parent::__construct()先初始化父类
@@ -197,8 +197,7 @@ class IndexController extends AppController{
 		// $this->view->render('',array(
 		// 	'a' => 'cccc'
 		// ));
-
-		$this->view->display('index');
+		echo 'hello xbphp框架';
 
 		//引入文件,以绝对路径的方式引入
 		//第一个参数文件名,第二个参数文件的路径
@@ -278,21 +277,5 @@ class IndexController extends AppController{
 		//关闭连接
 		//Socket::colse();
 	}
-
-	public function about() {
-		$this->view->display('about');
-	}
-
-	public function lists() {
-		$this->view->display('article/list');
-	}
-
-	public function article($id = null) {
-		if(empty($id)) {
-			$id = 1;
-		}
-		$this->view->display('article/'.$id);
-	}
-	
 
 }
