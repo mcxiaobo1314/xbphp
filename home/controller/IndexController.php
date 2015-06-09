@@ -204,7 +204,7 @@ class IndexController extends AppController{
 		// 	'a' => 'cccc'
 		// ));
 
-		$this->view->display('index');
+		echo 'hello xbphp';
 
 		//引入文件,以绝对路径的方式引入
 		//第一个参数文件名,第二个参数文件的路径
@@ -284,21 +284,5 @@ class IndexController extends AppController{
 		//关闭连接
 		//Socket::colse();
 	}
-
-	public function about() {
-		$this->view->display('about');
-	}
-
-	public function lists() {
-		$this->view->display('article/list');
-	}
-
-	public function article($id = null) {
-		if(empty($id)) {
-			$id = 1;
-		}
-		$this->view->display('article/'.$id);
-	}
-	
 
 }
