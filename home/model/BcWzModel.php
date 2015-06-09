@@ -20,6 +20,19 @@ class BcWzModel  extends AppModel{
 		
 	);
 
+	/**
+	 * 校验数据(支持POST和GET提交的数据校验)
+	 *  id 提交表单name
+	 *  type int校验数据是否整型 num校验数据是否数字 float校验数据是否单精度 string 校验数据是否字符串
+	 *  pattern 正则表达式
+	 *  msg 提示错误信息
+	 */
+	public function rules() {
+		return array(
+			array('id','type'=>'int','msg'=>'不是整数')
+		);
+	}
+
 
 	public function test() {
 		//echo '演示wzModel';

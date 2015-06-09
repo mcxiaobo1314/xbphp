@@ -5,7 +5,7 @@
  * @author wave
  */
 
- class Model {
+ class Model extends BaseModel {
 
  	//绑定数组
  	public $bind = array();
@@ -88,6 +88,7 @@
 	public function __destruct() {
 		$this->params = array();
 	}
+
 
 
 	/**
