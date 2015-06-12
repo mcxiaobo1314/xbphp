@@ -136,7 +136,7 @@ class view
 		}
 		
 		//判断编译文件是否存在，或者模版文件修改时间小于编译文件修改的时间
-		if(!file_exists($tmp_path.DS.$tmp_name) || ($file_path_time > $tmp_path_time)) 
+		if(!is_file($tmp_path.DS.$tmp_name) || ($file_path_time > $tmp_path_time)) 
 		{
 			$html = file_get_contents($file_path);
 			$html = $this->_include($html);

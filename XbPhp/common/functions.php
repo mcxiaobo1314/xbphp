@@ -163,8 +163,8 @@ function mkdirs($path,$cut = '/',$p = 0777) {
 	$arr = array_filter(explode($cut,$path));
 	foreach($arr as $key => $val) {
 		$file .= $val.DS;
-		if(!file_exists(ROOT.DS.$file)) {
-			mkdir(ROOT.DS.$file,$p);
+		if(!file_exists(ROOT.DS.$file) && !is_dir(ROOT.DS.$file)) {
+			@mkdir(ROOT.DS.$file,$p);
 		}
 	}
 }
