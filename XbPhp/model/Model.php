@@ -25,7 +25,10 @@
 	//获取参数
 	protected $params = array();
 
+	//获取SQL数组
 	protected $cacheSql = array();
+
+	static $link = null;
 
 
 	/**
@@ -531,19 +534,21 @@
 	 */
 	protected static function link($arr)
 	{
-		$db = new db(isset($arr['host']) ? $arr['host'] : '',
-			isset($arr['username']) ? $arr['username'] : '',
-			isset($arr['pwd']) ? $arr['pwd'] : '',
-			isset($arr['table']) ? $arr['table'] : '',
-			isset($arr['charset']) ? $arr['charset'] : '',
-			isset($arr['dbtype']) ? $arr['dbtype'] : '',
-			isset($arr['port']) ? $arr['port'] : '',
-			isset($arr['dns']) ? $arr['dns'] : ''
-		);		
+		if(self::$link == null) {
+			self::$link = new db(isset($arr['host']) ? $arr['host'] : '',
+				isset($arr['username']) ? $arr['username'] : '',
+				isset($arr['pwd']) ? $arr['pwd'] : '',
+				isset($arr['table']) ? $arr['table'] : '',
+				isset($arr['charset']) ? $arr['charset'] : '',
+				isset($arr['dbtype']) ? $arr['dbtype'] : '',
+				isset($arr['port']) ? $arr['port'] : '',
+				isset($arr['dns']) ? $arr['dns'] : ''
+			);	
+		}	
 		if(EXTENSION == 1) {
-			return $db->connect();
+			return self::$link->connect();
 		}
-		return $db->pdo_connect(); 
+		return self::$link->pdo_connect(); 
 	}
 
 	 // 回调方法 初始化模型

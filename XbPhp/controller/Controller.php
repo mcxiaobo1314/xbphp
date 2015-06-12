@@ -11,7 +11,11 @@ class Controller {
 	//加载组件数组
 	public $component = array();
 
+	//视图类
 	public $view = '';
+
+	//初始化类
+	static $init = array();
 
 	public function __construct() {
 		//加载组件或模型
@@ -75,6 +79,7 @@ class Controller {
 		}
 	}
 
+
 	/**
 	 * 加载文件并初始化
 	 * @param null $name 文件名
@@ -83,7 +88,7 @@ class Controller {
 	 */
 	public function load($name = null, $path = null) {
 		if(load($name,$path)) {
-			$this->$name = new $name();
+			$this->$name = $this->run_cache($name);
 		}
 	}
 
@@ -169,6 +174,7 @@ class Controller {
 		}
 	}
 
+
 	/**
 	 * 加载组件
 	 * @author wave
@@ -179,7 +185,7 @@ class Controller {
 			$arr[$object] = $object.'Component.php';
 			if(load($arr[$object],ROOT_PATH.DS.COMP)) {
 				$object_name = rtrim($arr[$object],'.php');
-				$this->{$arr[$object]} = new $object_name();
+				$this->{$arr[$object]} = $this->run_cache($object_name);
 			}
 		}
 	}
@@ -191,8 +197,8 @@ class Controller {
 	 * @author wave
 	 */
 	private function views() {
-		if(empty($this->view) && class_exists('view')) {
-			$this->view = new view();
+		if(class_exists('view')) {
+			$this->view = $this->run_cache('view');
 		}
 	}
 
@@ -212,6 +218,19 @@ class Controller {
 			}
 		}
 	}	
+
+	/**
+	 * 缓存初始化对象
+	 * @param string $obj 类名
+	 * @return object
+	 * @author wave
+	 */
+	protected function run_cache($obj) {
+		if(!in_array($obj,self::$init)){
+			self::$init[$obj] = new $obj();
+		}
+		return self::$init[$obj];
+	}
 
 	protected function _initialize() {}
 }
