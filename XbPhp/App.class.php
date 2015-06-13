@@ -7,7 +7,7 @@
 class App 
 {
 	//初始化
-	protected static $init ;
+	protected static $init = array();
 
 	/**
 	 * 每次初始化的执行加载和初始化
@@ -44,7 +44,7 @@ class App
 			if(load($controller,APP_PATH.DS.ROOT_CONTROLLER)) {
 				$controller_name = isset($params[M]) ? $params[M] : $params['0'];
 				$name = $controller_name.'Controller';
-				$xb = new $name();
+				$xb = self::run_cache($name);
 			}
 			if(isset($xb) && method_exists($xb,$action)) {
 				$request = isset($params['params']) ? $params['params'] : self::replaceArr(array($controller_name,$action),'',$params);
@@ -68,10 +68,20 @@ class App
 	 * @author wave
 	 */
 	public static function Run() {
-		if(self::$init == null || !self::$init instanceof App){
-			self::$init = new App();
+		return self::run_cache('App');
+	}
+
+	/**
+	 * 缓存初始化对象
+	 * @param string $obj 类名
+	 * @return object
+	 * @author wave
+	 */
+	protected static function run_cache($obj) {
+		if(!in_array($obj,self::$init)){
+			self::$init[$obj] = new $obj();
 		}
-		return self::$init;
+		return self::$init[$obj];
 	}
 
 	/**
