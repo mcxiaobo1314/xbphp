@@ -109,16 +109,21 @@ class Controller {
 			$obj_name  = rtrim($model_arr[$model],'.php');
 			//改变$this->uses引入模型的名字
 			$model = $this->change_model($model, $model_tem); 
-			$obj = new $obj_name($model,$prefix,$connect);
-			$obj_name = str_replace('Model', '', get_class($obj));
-			$obj_name = isset($model_tem) ? $model_tem : $obj_name;
-			$this->$obj_name = $obj;
+			if(!isset(self::$init[$obj_name])) {
+				self::$init[$obj_name] = new $obj_name($model,$prefix,$connect);
+			}
+			$model = str_replace('Model', '', get_class(self::$init[$obj_name]));
+			$model = isset($model_tem) ? $model_tem : $obj_name;
+			$this->$model = self::$init[$obj_name];
 		}else {
 			$model = $this->change_model($model, $model_tem);
-			$obj = new Model($model,$prefix,$connect);
-			$model = isset($model_tem) ? $model_tem : $model;
-			$this->$model = $obj;
+			if(!isset(self::$init[$model])) {
+				self::$init[$model] = new Model($model,$prefix,$connect);
+			}
+			$model_name = isset($model_tem) ? $model_tem : $model;
+			$this->$model_name = self::$init[$model];
 		}
+		
 	}
 
 	/**
