@@ -519,6 +519,7 @@
 		$_fields = ' * ';
 
 		if($data) {
+			$_fields = '';
 			foreach($data as $k => $v) {
 				$_fields .= '`'.$this->name.'`.`'.$v['Field'] . '`,';
 			}
