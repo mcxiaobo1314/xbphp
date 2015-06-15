@@ -97,18 +97,14 @@ class App
 				$params['params'] = $pArr; 
 			}
 		}else {
-			$params =  explode(SIGN,ltrim(strip_tags($pathinfo),'/'));
-			if(preg_match('/[\.]/', $params[count($params) -1])) {
-				$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'.'));
-				$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
-			}
-			$params['rewirte'] = true;
+			$pathinfo['rewirte'] = true;
+			$params = $pathinfo;
 		}
 		return $params;
 	}
 
 	/**
-	 * 获取服务器地址
+	 * 解析服務器URL
 	 * @return String
 	 * @author wave
 	 */
@@ -117,22 +113,22 @@ class App
 			return '';
 		//linux nginx属性
 		}elseif(isset($_SERVER['ORIG_PATH_INFO'])) {
-			return $_SERVER['ORIG_PATH_INFO'];
+			$url = $_SERVER['ORIG_PATH_INFO'];
 		//windows or linux  nginx apache属性
 		}elseif(isset($_SERVER['PATH_INFO'])) {
-			return $_SERVER['PATH_INFO'];
+			$url = $_SERVER['PATH_INFO'];
 		}else {
-			$params =  explode(SIGN,ltrim(strip_tags($_SERVER['REQUEST_URI']),'/'));
-			if(strtolower($params['0']) == strtolower(basename(ROOT))) {
-				array_splice($params,0,1);
-			}
-			if(preg_match('/[\.]/', $params[count($params) -1])) {
-				$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'.'));
-				$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
-			}
-			$url = implode(SIGN, $params);
-			return $url;
+			$url = $_SERVER['REQUEST_URI'];
 		}
+		$params =  explode(SIGN,ltrim(strip_tags($url),'/'));
+		if(strtolower($params['0']) == strtolower(basename(ROOT))) {
+			array_splice($params,0,1);
+		}
+		if(preg_match('/[\.]/', $params[count($params) -1])) {
+			$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'.'));
+			$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
+		}
+		return $params;
 	}
 
 
