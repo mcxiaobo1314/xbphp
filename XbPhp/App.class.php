@@ -19,7 +19,6 @@ class App
 		if(isset($params['0']) && strtolower($params['0']) == strtolower(APP_PATH)) {
 			array_splice($params,0,1);
 		}
-
 		$controller = null; //控制器路径
 		$name = null;       //控制器名称
 		$request = array(); //URL的参数
@@ -89,7 +88,7 @@ class App
 	 * @return Array
 	 * @author wave
 	 */
-	public static function getUrl() {
+	protected static function getUrl() {
 		$params = isset($_GET) ? $_GET : array();
 		$pathinfo  = self::getServerUrl();
 		if(empty($pathinfo)) {
@@ -123,7 +122,16 @@ class App
 		}elseif(isset($_SERVER['PATH_INFO'])) {
 			return $_SERVER['PATH_INFO'];
 		}else {
-			return str_replace(basename(strtolower(ROOT)), '', $_SERVER['REQUEST_URI']);
+			$params =  explode(SIGN,ltrim(strip_tags($_SERVER['REQUEST_URI']),'/'));
+			if(strtolower($params['0']) == strtolower(basename(ROOT))) {
+				array_splice($params,0,1);
+			}
+			if(preg_match('/[\.]/', $params[count($params) -1])) {
+				$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'.'));
+				$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
+			}
+			$url = implode(SIGN, $params);
+			return $url;
 		}
 	}
 

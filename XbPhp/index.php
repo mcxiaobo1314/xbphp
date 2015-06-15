@@ -58,9 +58,13 @@ if(isset($_SERVER['REDIRECT_URL'])) {
 			}
 		}
 	}else { //windows nginx 偽靜態
-		$_SERVER['REQUEST_URI'] = str_replace(basename(strtolower(ROOT)), '', $_SERVER['REQUEST_URI']);
-		if(!empty($_SERVER['REQUEST_URI'])) {
-			$arr = array_values(array_filter(explode('/', $_SERVER['REQUEST_URI'])));
+		$params =  explode('/',ltrim(strip_tags($_SERVER['REQUEST_URI']),'/'));
+		if(strtolower($params['0']) == strtolower(basename(ROOT))) {
+			array_splice($params,0,1);
+		}
+		$url = implode('/', $params);
+		if(!empty($url)) {
+			$arr = array_values(array_filter(explode('/', $url)));
 			if(isset($arr['0']) && file_exists(ROOT.DS.$arr['0'].DS)) {
 				define('APP_PATH', $arr['0']);
 			}
