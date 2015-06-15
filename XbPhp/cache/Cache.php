@@ -8,11 +8,11 @@ class Cache
 	//缓存文件的路径
 	public static $path = null;
 
-	//缓存的前缀
-	protected static $cache_prefix = 'Xb_Cache_';
-
 	//缓存路径
 	protected static $cache_dir = null;
+
+	//缓存的前缀
+	const CACHE_PREFIX = 'Xb_Cache_';
 
 	/**
 	 * 初始化
@@ -54,10 +54,10 @@ class Cache
 		self::init();
 		$file = ROOT.DS.APP_PATH.DS.self::$cache_dir;
 		$content = '';
-		if(!file_exists($file.self::$cache_prefix.$name)) {
+		if(!file_exists($file.self::CACHE_PREFIX.$name)) {
 			$content = $callback($params);
 			if(!empty($content)) {
-				file_put_contents($file.self::$cache_prefix.$name,serialize($content));
+				file_put_contents($file.self::CACHE_PREFIX.$name,serialize($content));
 				return ;
 			}
 		}
@@ -66,12 +66,12 @@ class Cache
 			return ;
 		}
 
-		if(file_exists($file.self::$cache_prefix.$name)) {
-			$cache_time = strtotime(date('Y-m-d H:i:s')) - strtotime(date('Y-m-d H:i:s',filemtime($file.self::$cache_prefix.$name)));
+		if(file_exists($file.self::CACHE_PREFIX.$name)) {
+			$cache_time = strtotime(date('Y-m-d H:i:s')) - strtotime(date('Y-m-d H:i:s',filemtime($file.self::CACHE_PREFIX.$name)));
 			if(($cache_time / 1000) >= $time || $time == 1) {
 				$content = $callback($params);
 				if(!empty($content)) {
-					file_put_contents($file.self::$cache_prefix.$name,serialize($content));
+					file_put_contents($file.self::CACHE_PREFIX.$name,serialize($content));
 					return ;
 				}
 			}
@@ -87,8 +87,8 @@ class Cache
 	public static function read($name) {
 		self::init();
 		$file = ROOT.DS.APP_PATH.DS.self::$cache_dir;
-		if(file_exists($file.self::$cache_prefix.$name)) {
-			return unserialize(file_get_contents($file.self::$cache_prefix.$name));
+		if(file_exists($file.self::CACHE_PREFIX.$name)) {
+			return unserialize(file_get_contents($file.self::CACHE_PREFIX.$name));
 		}
 		return false;
 	}
@@ -102,8 +102,8 @@ class Cache
 		$path = !empty(self::$path) ? self::$path : CACHE_DIR;
 		//缓存路径
 		self::$cache_dir = CACHE.DS.$path.DS;
-		if(file_exists(ROOT.DS.APP_PATH.DS.self::$cache_dir.self::$cache_prefix.$name)) {
-			return unlink(ROOT.DS.APP_PATH.DS.self::$cache_dir.self::$cache_prefix.$name);
+		if(file_exists(ROOT.DS.APP_PATH.DS.self::$cache_dir.self::CACHE_PREFIX.$name)) {
+			return unlink(ROOT.DS.APP_PATH.DS.self::$cache_dir.self::CACHE_PREFIX.$name);
 		}
 		return false;
 	}
