@@ -34,7 +34,11 @@ class Xbphp  {
 			$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'?'));
 			$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
 		}
-		return $params;
+		 //删除目录文件
+		if(isset($params['0']) && strtolower($params['0']) == strtolower(APP_PATH)) {
+			array_splice($params,0,1);
+		}
+		return array_values(array_filter($params));
 	}
 
 

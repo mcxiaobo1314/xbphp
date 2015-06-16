@@ -13,10 +13,6 @@ class App
 	 */
 	public function __construct() {
 		$params = array_filter(self::getUrl());  //獲取URL參數數組
-		 //删除目录文件
-		if(isset($params['0']) && strtolower($params['0']) == strtolower(APP_PATH)) {
-			array_splice($params,0,1);
-		}
 		$controller = null; //控制器路径
 		$name = null;       //控制器名称
 		$request = array(); //URL的参数
@@ -76,9 +72,10 @@ class App
 	protected static function getUrl() {
 		$pathinfo  = Xbphp::getServerUrl();
 		if(empty($pathinfo)) {
-			$params = isset($_GET) ? $_GET : array();
-			if(!empty($params) && isset($params[M]) && isset($params[A])) {
-				$pArr =array_filter(self::replaceArr(array($params[M],$params[A]),'',$params));
+			if(!empty($_GET) && isset($_GET[M]) && isset($_GET[A])) {
+				$pArr =array_filter(self::replaceArr(array($_GET[M],$_GET[A]),'',$_GET));
+				$params[M] = $_GET[M];
+				$params[A] = $_GET[A];
 				$params['params'] = $pArr; 
 			}
 		}else {
