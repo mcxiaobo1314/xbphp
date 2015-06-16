@@ -14,9 +14,6 @@ class Controller {
 	//视图类
 	public $view = '';
 
-	//初始化类
-	static $init = array();
-
 	public function __construct() {
 		//加载组件或模型
 		$this->AtuoLoads();
@@ -88,7 +85,7 @@ class Controller {
 	 */
 	public function load($name = null, $path = null) {
 		if(load($name,$path)) {
-			$this->$name = $this->run_cache($name);
+			$this->$name = Xbphp::run_cache($name);
 		}
 	}
 
@@ -109,19 +106,19 @@ class Controller {
 			$obj_name  = rtrim($model_arr[$model],'.php');
 			//改变$this->uses引入模型的名字
 			$model = $this->change_model($model, $model_tem); 
-			if(!isset(self::$init[$obj_name])) {
-				self::$init[$obj_name] = new $obj_name($model,$prefix,$connect);
+			if(!isset(Xbphp::$init[$obj_name])) {
+				Xbphp::$init[$obj_name] = new $obj_name($model,$prefix,$connect);
 			}
-			$model = str_replace('Model', '', get_class(self::$init[$obj_name]));
+			$model = str_replace('Model', '', get_class(Xbphp::$init[$obj_name]));
 			$model = isset($model_tem) ? $model_tem : $obj_name;
-			$this->$model = self::$init[$obj_name];
+			$this->$model = Xbphp::$init[$obj_name];
 		}else {
 			$model = $this->change_model($model, $model_tem);
-			if(!isset(self::$init[$model])) {
-				self::$init[$model] = new Model($model,$prefix,$connect);
+			if(!isset(Xbphp::$init[$model])) {
+				Xbphp::$init[$model] = new Model($model,$prefix,$connect);
 			}
 			$model_name = isset($model_tem) ? $model_tem : $model;
-			$this->$model_name = self::$init[$model];
+			$this->$model_name = Xbphp::$init[$model];
 		}
 		
 	}
@@ -190,11 +187,10 @@ class Controller {
 			$arr[$object] = $object.'Component.php';
 			if(load($arr[$object],ROOT_PATH.DS.COMP)) {
 				$object_name = rtrim($arr[$object],'.php');
-				$this->{$arr[$object]} = $this->run_cache($object_name);
+				$this->{$arr[$object]} = Xbphp::run_cache($object_name);
 			}
 		}
 	}
-
 
 	/**
 	 * 初始化视图类
@@ -203,7 +199,7 @@ class Controller {
 	 */
 	private function views() {
 		if(class_exists('view')) {
-			$this->view = $this->run_cache('view');
+			$this->view = Xbphp::run_cache('view');
 		}
 	}
 
@@ -223,19 +219,6 @@ class Controller {
 			}
 		}
 	}	
-
-	/**
-	 * 缓存初始化对象
-	 * @param string $obj 类名
-	 * @return object
-	 * @author wave
-	 */
-	protected function run_cache($obj) {
-		if(!in_array($obj,self::$init)){
-			self::$init[$obj] = new $obj();
-		}
-		return self::$init[$obj];
-	}
 
 	protected function _initialize() {}
 }

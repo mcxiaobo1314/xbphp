@@ -25,8 +25,7 @@ class view
 	protected $replaced = array(
 		'sign'=>array('[',']','.',"'",'"'),
 		'foreach'=>array('as','=>')
-
-		);
+	);
 
 	public function __construct() {
 
@@ -34,7 +33,6 @@ class view
 		$this->root = ROOT.DS.APP_PATH.DS;
 		//判断是否开启smarty
 		if(SMARTY == 1) {
-
 			$this->_get_smarty();
 		}
 	}
@@ -410,15 +408,8 @@ class view
 	 * @author wave
 	 */
 	private function _get_smarty() {
-
-		static $link = 0;
-
-		if($link == 0)  {
-			load('Smarty.class.php','vendors/Smarty/libs');
-			$this->smarty = new Smarty;
-			++$link;
-		}
-
+		load('Smarty.class.php','vendors/Smarty/libs');
+		$this->smarty = Xbphp::run_cache('Smarty');
 		$this->smarty->cache_dir = $this->root.CACHE.DS.TEMPLATES;
 		$this->smarty->template_dir = $this->root.ROOT_VIEW.DS;
 		$this->smarty->compile_dir = $this->root.CACHE.DS.TMP;
@@ -453,51 +444,22 @@ class view
 	 */
 	private function _get_action() {
 
-		$url = array();
-		// $url = isset($_SERVER['ORIG_PATH_INFO']) ? $_SERVER['ORIG_PATH_INFO'] :(isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '');
-		$url = $this->getServerUrl();
-		
-		if(!empty($url)) {
-			$url = array_values(array_filter(explode(SIGN,$url)));
+		$arr = Xbphp::getServerUrl();
 
-			//數組最後一個元素去除.後面的字符
-			if(preg_match('/[\.]/', $url[count($url) - 1])) {
-				$str = substr($url[count($url) - 1],strpos($url[count($url) - 1],'.'));
-				$url[count($url)- 1] = str_replace($str,'',$url[count($url) - 1]);
-			}
-
-			if(isset($url['0']) && $url['0'] == APP_PATH)  {
-				//删除第一个URL的参数
-				array_splice($url,0,1);
-			}
+		if(isset($arr['0']) && $arr['0'] == APP_PATH)  {
+			//删除第一个URL的参数
+			array_splice($arr,0,1);
 		}
 
-		if(!isset($url['1'])) {
-			$url['1'] = A_INDEX;
+		if(!isset($arr['1'])) {
+			$arr['1'] = A_INDEX;
 		}
 
 		if(isset($_GET[A]) && !empty($_GET[A])) {
-			$url['1'] = $_GET[A];
+			$arr['1'] = $_GET[A];
 		} 
 
-		return $url['1'];
+		return $arr['1'];
 	}
 
-
-	/**
-	 * 获取服务器地址
-	 * @return String
-	 * @author wave
-	 */
-	protected  function getServerUrl() {
-		//linux nginx属性
-		if(isset($_SERVER['ORIG_PATH_INFO'])) {
-			return $_SERVER['ORIG_PATH_INFO'];
-		//windows or linux  nginx apache属性
-		}elseif(isset($_SERVER['PATH_INFO'])) {
-			return $_SERVER['PATH_INFO'];
-		}else {
-			return str_replace(basename(strtolower(ROOT)), '', $_SERVER['REQUEST_URI']);
-		}
-	}
 }

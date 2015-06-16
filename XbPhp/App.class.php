@@ -6,8 +6,6 @@
 
 class App 
 {
-	//初始化
-	protected static $init = array();
 
 	/**
 	 * 每次初始化的执行加载和初始化
@@ -43,7 +41,7 @@ class App
 			if(load($controller,APP_PATH.DS.ROOT_CONTROLLER)) {
 				$controller_name = isset($params[M]) ? $params[M] : $params['0'];
 				$name = $controller_name.'Controller';
-				$xb = self::run_cache($name);
+				$xb = Xbphp::run_cache($name);
 			}
 			if(isset($xb) && method_exists($xb,$action)) {
 				$request = isset($params['params']) ? $params['params'] : self::replaceArr(array($controller_name,$action),'',$params);
@@ -67,20 +65,7 @@ class App
 	 * @author wave
 	 */
 	public static function Run() {
-		return self::run_cache('App');
-	}
-
-	/**
-	 * 缓存初始化对象
-	 * @param string $obj 类名
-	 * @return object
-	 * @author wave
-	 */
-	protected static function run_cache($obj) {
-		if(!in_array($obj,self::$init)){
-			self::$init[$obj] = new $obj();
-		}
-		return self::$init[$obj];
+		return Xbphp::run_cache('App');
 	}
 
 	/**
@@ -89,9 +74,9 @@ class App
 	 * @author wave
 	 */
 	protected static function getUrl() {
-		$params = isset($_GET) ? $_GET : array();
-		$pathinfo  = self::getServerUrl();
+		$pathinfo  = Xbphp::getServerUrl();
 		if(empty($pathinfo)) {
+			$params = isset($_GET) ? $_GET : array();
 			if(!empty($params) && isset($params[M]) && isset($params[A])) {
 				$pArr =array_filter(self::replaceArr(array($params[M],$params[A]),'',$params));
 				$params['params'] = $pArr; 
@@ -102,35 +87,6 @@ class App
 		}
 		return $params;
 	}
-
-	/**
-	 * 解析服務器URL
-	 * @return String
-	 * @author wave
-	 */
-	protected static function getServerUrl() {
-		if(!empty($_GET)){
-			return '';
-		//linux nginx属性
-		}elseif(isset($_SERVER['ORIG_PATH_INFO'])) {
-			$url = $_SERVER['ORIG_PATH_INFO'];
-		//windows or linux  nginx apache属性
-		}elseif(isset($_SERVER['PATH_INFO'])) {
-			$url = $_SERVER['PATH_INFO'];
-		}else {
-			$url = $_SERVER['REQUEST_URI'];
-		}
-		$params =  explode(SIGN,ltrim(strip_tags($url),'/'));
-		if(strtolower($params['0']) == strtolower(basename(ROOT))) {
-			array_splice($params,0,1);
-		}
-		if(preg_match('/[\.]/', $params[count($params) -1])) {
-			$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'.'));
-			$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
-		}
-		return $params;
-	}
-
 
 
 	/**
