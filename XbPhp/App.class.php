@@ -82,7 +82,7 @@ class App
 			$pathinfo['rewirte'] = true;
 			$params = $pathinfo;
 		}
-		return $params;
+		return !empty($params) ? $params : '';
 	}
 
 

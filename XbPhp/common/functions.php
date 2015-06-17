@@ -11,17 +11,19 @@
  * @return object
  * @author wave
  */
-function loadModel($model = null) {
+function loadModel($model = null,$prefix = null,$connect = null) {
 	static $model_arr = array();
-	$model_name = null;
-	if(!empty($model) && !in_array($model,$model_arr)) {
-		$model_arr[$model] = $model.'Model.php';
+	$model_name = $model.'Model.php';
+	if(!load($model_name,APP_PATH.DS.ROOT_MODEL.DS)) {
+		return false;
 	}
-	if(isset($model_arr[$model]) && load($model_arr[$model],APP_PATH.DS.ROOT_MODEL.DS)) {
-		$model_name = rtrim($model_arr[$model],'.php');
-		return new $model_name();
+	if(!isset($model_arr[$model])) {
+		$model = change_model($model,$model_tem);
+		$model_name = rtrim($model_name,'.php');
+		$model_arr[$model] = new $model_name($model,$prefix,$connect);
+		return $model_arr[$model];
 	}
-	return false;	
+	return is_object($model_arr[$model]) ? $model_arr[$model] : false;	
 }
 
 
@@ -167,4 +169,23 @@ function mkdirs($path,$cut = '/',$p = 0777) {
 			@mkdir(ROOT.DS.$file,$p);
 		}
 	}
+}
+
+/**
+ * 改变$this->uses引入的模型，在字符大写加下划线并转换小写
+ * @param string $model 要改变的模型名字
+ * @param string &$model_tem 保存原来的模型名字的地址
+ * @return string
+ * @author wave
+ */
+function change_model($model, &$model_tem) {
+	$model_tem = $model;
+	$arr =preg_split("/(?=[A-Z])/",$model); //以大写字母为分割符，拆分成数组
+	if(!empty($arr)) {
+		$str =strtolower(join('_',(array_values($arr))));
+		if($str['0'] == '_') {
+			$model = substr($str,strpos($str,$str['0'])+strlen($str['0']));
+		}
+	}
+	return $model;
 }
