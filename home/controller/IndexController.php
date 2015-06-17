@@ -13,7 +13,7 @@ class IndexController extends AppController{
 	 * 加载组件:去AppController.php里面进行加载,如果单独在某个控制器加载组件会覆盖AppController
 	 * 里面公用加载组件
 	 */
-	public $uses = array('BcWz','BcTest','BcNav');
+	 public $uses = array('BcWz','BcTest','BcNav');
 
 
 	//要自动初始化函数,必须在构造函数里面写上parent::__construct()先初始化父类
@@ -29,7 +29,7 @@ class IndexController extends AppController{
 		// if(!$this->BcWz->validate()){
 		// 	var_dump($this->BcWz->error);
 		// }
-		
+
 		// echo $id."<br>";
 		// echo $uid."<br>";
 		//这个还是有问题
@@ -211,13 +211,14 @@ class IndexController extends AppController{
 		//load('tet.php','/aaa/bbb');
 
 
-		//加载只能加载实例模型,必须要在MODEL文件有testModel.php才能加载
-		// $wz = loadModel('wz');
-		// $wz->test();
+		//加载只能加载实例模型
+		//第一個參數表名,第二參數前綴,第三的連接數據
+		// $wz = loadModel('BcWz');
+		// $wz->find();
 
 		//调用testModel公用方法
-		//$this->loadModel('wz');
-		//$this->wz->test();
+		// $this->loadModel('wz');
+		// $this->wz->test();
 
 		//写入Cookie
 		//$this->Cookie->write('a','b');
@@ -284,5 +285,6 @@ class IndexController extends AppController{
 		//关闭连接
 		//Socket::colse();
 	}
+	
 
 }
