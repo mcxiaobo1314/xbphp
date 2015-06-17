@@ -12,7 +12,7 @@ class App
 	 * @author wave
 	 */
 	public function __construct() {
-		$params = array_filter(self::getUrl());  //獲取URL參數數組
+		$params = self::getUrl();  //獲取URL參數數組
 		$controller = null; //控制器路径
 		$name = null;       //控制器名称
 		$request = array(); //URL的参数
