@@ -66,9 +66,7 @@ class Controller {
 	public function is($val) {
 		switch ($val) {
 			case 'ajax':
-				if(isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-					return (strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') ? true : flase;
-				}
+				return (strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') ? true : flase;
 				break;
 			default:
 				return (strtolower($_SERVER['REQUEST_METHOD']) === $val) ? true : false;
