@@ -131,15 +131,7 @@ class Controller {
 	 * @author wave
 	 */
 	protected function change_model($model, &$model_tem) {
-		$model_tem = $model;
-		$arr =preg_split("/(?=[A-Z])/",$model); //以大写字母为分割符，拆分成数组
-		if(!empty($arr)) {
-			$str =strtolower(join('_',(array_values($arr))));
-			if($str['0'] == '_') {
-				$model = substr($str,strpos($str,$str['0'])+strlen($str['0']));
-			}
-		}
-		return $model;
+		return change_model($model, $model_tem);
 	}
 
 	/**
@@ -154,17 +146,7 @@ class Controller {
 		//获取默认的控制器名字
 		$this->request->controller = M_INDEX;
 
-		$this->params = isset($_SERVER['PATH_INFO']) ? explode(SIGN,ltrim(strip_tags($_SERVER['PATH_INFO']),'/')) : '';
-		if(isset($this->params['0']) && $this->params['0'] == APP_PATH)  {
-			//删除第一个URL的参数
-			array_splice($this->params,0,1);
-		}
-
-		$params = $this->params;
-		if(!empty($this->params) && preg_match('/[\.]/', $this->params[count($params) -1])) {
-			$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'.'));
-			$this->params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
-		}
+		$this->params = Xbphp::getServerUrl();
 
 		//获取URL的访问的控制器
 		if(isset($this->params['0'])) {
