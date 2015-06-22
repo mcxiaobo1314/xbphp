@@ -105,6 +105,7 @@ class view
      * @author wave
 	 */
 	private function _compresFile($templateFile = null) {
+
 		$tmpfile = !empty($templateFile) ? $templateFile : $this->_get_action();
 		//编译文件路径
 		$tmp_path  = $this->root.CACHE.DS.TEMPLATES;
@@ -445,21 +446,20 @@ class view
 	private function _get_action() {
 
 		$arr = Xbphp::getServerUrl();
-
-		if(isset($arr['0']) && $arr['0'] == APP_PATH)  {
-			//删除第一个URL的参数
-			array_splice($arr,0,1);
+		if(!isset($arr['0'])) {
+			$arr['0'] = M_INDEX;
 		}
-
 		if(!isset($arr['1'])) {
 			$arr['1'] = A_INDEX;
 		}
-
+		if(isset($_GET[M]) && !empty($_GET[M])) {
+			$arr['0'] = $_GET[M];
+		}
 		if(isset($_GET[A]) && !empty($_GET[A])) {
 			$arr['1'] = $_GET[A];
 		} 
-
-		return $arr['1'];
+		return $arr['0'].DS.$arr['1'];
 	}
+
 
 }
