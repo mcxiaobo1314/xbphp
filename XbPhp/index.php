@@ -37,7 +37,7 @@ if(isset($_SERVER['REDIRECT_URL'])) {
 	//这个是linux或windows自动获取目录
 	$pathinfo = $_SERVER['REDIRECT_URL']; 
 	$arr = array_values(array_filter(explode('/',ltrim(strip_tags($pathinfo),'/'))));
-	if(strtolower($arr['0']) == strtolower(ROOT_PATH)) {
+	if(isset($arr['0']) && strtolower($arr['0']) == strtolower(ROOT_PATH)) {
 		array_splice($arr,0,1);
 	}
 	if(isset($arr['0']) && file_exists(ROOT.DS.$arr['0'].DS)) {
