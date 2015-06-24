@@ -22,7 +22,7 @@ class Xbphp  {
 		}elseif(!empty($_SERVER['REQUEST_URI'])) {
 			$url = $_SERVER['REQUEST_URI'];
 		}
-		$params =  explode(SIGN,ltrim(strip_tags($url),'/'));
+		$params =  explode('/',ltrim(strip_tags($url),'/'));
 		if(strtolower($params['0']) == strtolower(basename(ROOT))) {
 			array_splice($params,0,1);
 		}
@@ -54,7 +54,6 @@ class Xbphp  {
 		}
 		return self::$init[$obj];
 	}
-
 
 
 }

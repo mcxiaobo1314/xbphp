@@ -16,6 +16,7 @@ class App
 		$controller = null; //控制器路径
 		$name = null;       //控制器名称
 		$request = array(); //URL的参数
+		$num = 0; //动态URL访问
 		//动态的URL的路由器
 		if(!isset($params['rewirte'])) {
 			$params[M] = isset($params[M]) ? $params[M] : M_INDEX;
@@ -30,6 +31,7 @@ class App
 				$params['1'] = isset($params['1']) ? $params['1'] : A_INDEX;
 				$controller = $params['0'].'Controller.php';
 				$action = $params['1'];
+				$num = 1;
 			}	
 		}
 		//引入控制器,并初始化控制器
@@ -41,18 +43,30 @@ class App
 			}
 			if(isset($xb) && method_exists($xb,$action)) {
 				$request = isset($params['params']) ? $params['params'] : self::replaceArr(array($controller_name,$action),'',$params);
-				call_user_func_array(array($xb,$action),$request);
-				//打开DEUG
-				if(DEBUG) {
-					self::debug();
+				$route = load('route.php',APP_PATH.DS.DATABASE.DS); //加载路由规则
+				if(!empty($num) && !empty($route) && isset($route['rewirte'][rtrim($controller,'Controller.php')])) {
+					$request = implode('/',$request);
+					$this->route('rewirte',$request,$route,$controller);
 				}
+				//动态url规则
+				if(empty($num) && !empty($route) && isset($route['trends'][rtrim($controller,'Controller.php')])) {
+					$str = '';
+					foreach($request as $k => $v) {
+						$str .= $k . '/' . $v . '/';
+					}
+					$request = rtrim($str,'/');
+					$this->route('trends',$request,$route,$controller);
+				}
+				call_user_func_array(array($xb,$action),$request);
 			}else {
-				load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'); 
-				exit;
+				return load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'); 
 			}
 		}else {
-			load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'); 
-			exit;
+			return load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'); 
+		}
+		//打开DEUG
+		if(DEBUG) {
+			self::debug();
 		}
 	}
 
@@ -62,6 +76,22 @@ class App
 	 */
 	public static function Run() {
 		return Xbphp::run_cache('App');
+	}
+
+	/**
+	 * 设置路由规则
+	 * @param string $op 
+	 * @param Array $request 请求的参数
+	 * @param Array $route 路由
+	 * @param string $controller
+	 */
+	protected function route($op,&$request,$route,$controller) {
+		if(preg_match($route[$op][rtrim($controller,'Controller.php')], $request,$arr)) {
+			$request = array_values(array_filter(array_splice($arr,0,1)));
+		}else {
+		 	load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl');
+		 	exit;
+		}
 	}
 
 	/**

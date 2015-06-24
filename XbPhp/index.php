@@ -8,7 +8,6 @@ if(version_compare(PHP_VERSION,'5.2.0') < 0) {
 	die('您的PHP版本低于5.2.0,请下载5.2.0以上的版本');
 }
 
-
 //定义默认目录
 $root_path = 'home';
 
@@ -62,7 +61,8 @@ if(isset($_SERVER['REDIRECT_URL'])) {
 		if(strtolower($arr['0']) == strtolower(basename(ROOT))) {
 			array_splice($arr,0,1);
 		}
-		if(!empty($url)) {
+
+		if(!empty($arr)) {
 			if(isset($arr['0']) && file_exists(ROOT.DS.$arr['0'].DS)) {
 				define('APP_PATH', $arr['0']);
 			}
