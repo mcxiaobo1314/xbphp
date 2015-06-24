@@ -58,7 +58,7 @@ if(isset($_SERVER['REDIRECT_URL'])) {
 		}
 	}else { //windows nginx 偽靜態
 		$arr =  array_values(array_filter(explode('/',ltrim(strip_tags($_SERVER['REQUEST_URI']),'/'))));
-		if(strtolower($arr['0']) == strtolower(basename(ROOT))) {
+		if(isset($arr['0']) && strtolower($arr['0']) == strtolower(basename(ROOT))) {
 			array_splice($arr,0,1);
 		}
 
