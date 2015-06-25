@@ -44,18 +44,18 @@ class App
 			if(isset($xb) && method_exists($xb,$action)) {
 				$request = isset($params['params']) ? $params['params'] : self::replaceArr(array($controller_name,$action),'',$params);
 				$route = load('route.php',APP_PATH.DS.DATABASE.DS); //加载路由规则
-				if(!empty($num) && !empty($route) && isset($route['rewirte'][rtrim($controller,'Controller.php')])) {
+				if(!empty($num) && !empty($route) && isset($route['rewirte'][rtrim($controller,'Controller.php')][$action])) {
 					$request = implode('/',$request);
-					$this->route('rewirte',$request,$route,$controller);
+					$this->route('rewirte',$request,$route,$controller,$action);
 				}
 				//动态url规则
-				if(empty($num) && !empty($route) && isset($route['trends'][rtrim($controller,'Controller.php')])) {
+				if(empty($num) && !empty($route) && isset($route['trends'][rtrim($controller,'Controller.php')][$action])) {
 					$str = '';
 					foreach($request as $k => $v) {
 						$str .= $k . '/' . $v . '/';
 					}
 					$request = rtrim($str,'/');
-					$this->route('trends',$request,$route,$controller);
+					$this->route('trends',$request,$route,$controller,$action);
 				}
 				call_user_func_array(array($xb,$action),$request);
 			}else {
@@ -84,9 +84,10 @@ class App
 	 * @param Array $request 请求的参数
 	 * @param Array $route 路由
 	 * @param string $controller
+	 * @param string $action
 	 */
-	protected function route($op,&$request,$route,$controller) {
-		if(preg_match($route[$op][rtrim($controller,'Controller.php')], $request,$arr)) {
+	protected function route($op,&$request,$route,$controller,$action) {
+		if(preg_match($route[$op][rtrim($controller,'Controller.php')][$action], $request,$arr)) {
 			$request = array_values(array_filter(array_splice($arr,0,1)));
 		}else {
 		 	load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl');

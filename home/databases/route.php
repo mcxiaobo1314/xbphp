@@ -9,11 +9,16 @@
 $route = array(
 	//伪静态路由规则，如:/Index/index/id/1/cid/2,则访问必须要加id/1/cid/2才能进行访问,不然会404
 	'rewirte' => array(
-		// 'Index'=>"/^id\/([a-zA-Z_0-9]+)\/cid\/([a-zA-Z_0-9]+)$/i"
+		//Index是控制器名,test是方法名
+		// 'Index'=> array(
+			//	'test' => "/^id\/([a-zA-Z_0-9]+)\/cid\/([a-zA-Z_0-9]+)$/i"
+		//)
 	),
 	//动态url规则,如:?m=Index&a=index&id=1&cid=2,则参数id和cid键名必须是这俩个改成其他就会404
 	'trends' => array(
-		// 'Index'=>"/^id\/([a-zA-Z_0-9]+)\/cid\/([a-zA-Z_0-9]+)$/i"
+		// 'Index'=> array(
+			//	'test' => "/^id\/([a-zA-Z_0-9]+)\/cid\/([a-zA-Z_0-9]+)$/i"
+		//)
 	)
 );
 
