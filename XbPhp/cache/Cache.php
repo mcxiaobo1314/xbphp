@@ -88,7 +88,7 @@ class Cache
 		self::init();
 		$file = ROOT.DS.APP_PATH.DS.self::$cache_dir;
 		if(file_exists($file.self::CACHE_PREFIX.$name)) {
-			return unserialize(file_get_contents($file.self::CACHE_PREFIX.$name));
+			return unserialize(gzuncompress(file_get_contents($file.self::CACHE_PREFIX.$name)));
 		}
 		return false;
 	}
