@@ -57,7 +57,7 @@ class Cache
 		if(!file_exists($file.self::CACHE_PREFIX.$name)) {
 			$content = $callback($params);
 			if(!empty($content)) {
-				file_put_contents($file.self::CACHE_PREFIX.$name,serialize($content));
+				file_put_contents($file.self::CACHE_PREFIX.$name,gzcompress(serialize($content)));
 				return ;
 			}
 		}
@@ -71,7 +71,7 @@ class Cache
 			if(($cache_time / 1000) >= $time || $time == 1) {
 				$content = $callback($params);
 				if(!empty($content)) {
-					file_put_contents($file.self::CACHE_PREFIX.$name,serialize($content));
+					file_put_contents($file.self::CACHE_PREFIX.$name,gzcompress(serialize($content)));
 					return ;
 				}
 			}
