@@ -165,9 +165,10 @@ class Controller {
 		static $arr = array();
 		if(!in_array($object,$arr)) {
 			$arr[$object] = $object.'Component.php';
+			
 			if(load($arr[$object],ROOT_PATH.DS.COMP)) {
 				$object_name = rtrim($arr[$object],'.php');
-				$this->{$arr[$object]} = Xbphp::run_cache($object_name);
+				$this->{$object} = Xbphp::run_cache($object_name);
 			}
 		}
 	}

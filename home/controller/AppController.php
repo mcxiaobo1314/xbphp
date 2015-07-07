@@ -11,7 +11,8 @@ class AppController extends Controller
 	public $component = array(
 			'Cookie',
 			'Session',
-			'Mail'
+			'Mail',
+			'Rpc' //加载PHPRPC组件
 	);
 
 

@@ -23,6 +23,7 @@ define('ROOT_MODEL','model');                             	//模型文件的路�
 define('ROOT_CONTROLLER','controller'); 					//控制器文件的路径
 define('ROOT_VIEW','view'); 								//视图文件的路径
 define('ROOT_COM','common');  								//公用方法文件路径
+define('ROOT_LIBRARY','library');  							//存放第三方代码
 define('ROOT_ERROR','error');                               //错误信息提示文件路径
 define('CACHE','cache');  									//定义缓存文件路径
 define('TEMPLATES','templates_c');                          //编译文件路径

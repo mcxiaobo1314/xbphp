@@ -24,6 +24,14 @@ class IndexController extends AppController{
 
 
 	public function test($id = null,$uid = null) { 
+		//调用phprpc,需要先加载组件,使用的是phprpc3.0.1 版本
+		//服务端调用底下示例: 
+		// $server = $this->Rpc->server();
+		// var_dump($server);
+		//客户端调用底下示例: 
+		// $client = $this->Rpc->client('http://127.0.0.1/xbphp/Index/test');
+		// var_dump($client);
+
 		//表单数据校验,对应的模型里面写校验规则,详情请看BcWzModel.php
 		// $_POST['id'] = 'aaaa';
 		// if(!$this->BcWz->validate()){
