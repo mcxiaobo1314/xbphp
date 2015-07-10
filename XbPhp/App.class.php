@@ -29,6 +29,10 @@ class App
 				unset($params['rewirte']);
 				$params['0'] = isset($params['0']) ? $params['0'] : M_INDEX;
 				$params['1'] = isset($params['1']) ? $params['1'] : A_INDEX;
+				if(strpos($params['1'],'?') !== false) {
+					$str = substr($params['1'],strpos($params['1'],'?'));
+					$params['1'] = str_replace($str,'',$params['1']);
+				}
 				$controller = $params['0'].'Controller.php';
 				$action = $params['1'];
 				$num = 1;
