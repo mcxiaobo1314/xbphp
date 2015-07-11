@@ -23,7 +23,14 @@ class IndexController extends AppController{
 	}
 
 
-	public function test($id = null,$uid = null) { 
+	public function test($id = null,$uid = null) {
+		//需要统一控制,可以自己定义一个全局变量来控制
+		//Xbphp::toUrl('写要访问的URL','1是动态,2是伪静态','要定义的键名') 
+		//该例子演示动态URL转换伪静态
+		//Xbphp::toUrl('?m=Index&a=test&a=aaa&c=dddd',2,array('2'=>'cid','3'=>'did'));
+		//该例子演示了伪静态转换成动态URL
+		//Xbphp::toUrl('/Index/test/aaa/dddd/',1,array('2'=>'cid','3'=>'did')); 
+
 		//调用phprpc,需要先加载组件,使用的是phprpc3.0.1 版本
 		//服务端调用底下示例: 
 		// $server = $this->Rpc->server();

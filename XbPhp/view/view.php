@@ -81,6 +81,11 @@ class view
 		$tmpfile = !empty($templateFile) ? $templateFile : $this->_get_action();
 		//模版文件路径
 		$file_path = $this->root.ROOT_VIEW.DS.$tmpfile.$this->suffix;
+		
+		if(strpos($tmpfile, '.') !== false) {
+			$file_path = $this->root.ROOT_VIEW.DS.$tmpfile;
+		}
+		
 		extract($array);
 		require $file_path;
 	}
