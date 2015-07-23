@@ -55,7 +55,6 @@ class Xbphp  {
 		if(!in_array($obj,self::$init)){
 			self::$init[$obj] = new $obj();
 		}
-		var_dump(self::$init);
 		return self::$init[$obj];
 	}
 
