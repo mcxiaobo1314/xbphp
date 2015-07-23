@@ -45,18 +45,22 @@ class App
 				$name = $controller_name.'Controller';
 				$xb = Xbphp::run_cache($name);
 			}
+			
 			if(isset($xb) && method_exists($xb,$action)) {
-				$request = isset($params['params']) ? $params['params'] : self::replaceArr(array($controller_name,$action),'',$params);
+				$paramArr = self::replaceArr(array($controller_name,$action),'',$params);
+				$request = isset($params['params']) ? $params['params'] : $paramArr;
 				$route = load('route.php',APP_PATH.DS.DATABASE.DS); //加载路由规则
-				if(!empty($num) && !empty($route) && isset($route['rewirte'][rtrim($controller,'Controller.php')][$action])) {
+
+				if(!empty($num) && isset($route['rewirte'][rtrim($controller,'Controller.php')][$action])) {
 					$request = implode('/',$request);
 					$this->route('rewirte',$request,$route,$controller,$action);
 				}
+
 				//动态url规则
-				if(empty($num) && !empty($route) && isset($route['trends'][rtrim($controller,'Controller.php')][$action])) {
+				if(empty($num) && isset($route['trends'][rtrim($controller,'Controller.php')][$action])) {
 					$str = '';
 					foreach($request as $k => $v) {
-						$str .= $k . '/' . $v . '/';
+						$str .= $k.'/'.$v.'/';
 					}
 					$request = rtrim($str,'/');
 					$this->route('trends',$request,$route,$controller,$action);
@@ -64,9 +68,11 @@ class App
 				call_user_func_array(array($xb,$action),$request);
 			}else {
 				return load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'); 
+				exit;
 			}
 		}else {
-			return load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'); 
+			load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl');
+			exit;
 		}
 		//打开DEUG
 		if(DEBUG) {
@@ -142,7 +148,7 @@ class App
 	 * @author wave
 	 */
 	protected static function replaceArr($arr,$rArr,$params) {
-		if($arr && $params) {
+		if(isset($arr) && !empty($params)) {
 			return array_filter(str_replace($arr,$rArr, $params));
 		}
 	}
