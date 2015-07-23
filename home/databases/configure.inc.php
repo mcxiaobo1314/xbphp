@@ -11,7 +11,7 @@ define('CACHE_DIR','tmp');                               	//设置文件缓存�
 define('M_INDEX','Index'); 									//设置默认访问控制器
 define('A_INDEX','test'); 									//设置默认访问方法
 define('COMPRESS',0);                         				//压缩编译文件,1为压缩，0为不压缩
-define('SMARTY',1);                             			//smarty模版引擎,1为开启，0为关闭
+define('SMARTY',0);                             			//smarty模版引擎,1为开启，0为关闭
 define('EXTENSION',2);                                		//可以填写1为MYSQL,2为PDO
 define('SUFFIX','.html');                                	//定义模版的后缀名字    
 define('LDELIMITER','<{');     		                      	//定义左边界符号   

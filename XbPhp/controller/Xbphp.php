@@ -8,6 +8,7 @@ class Xbphp  {
 	//初始化
 	public static $init = array();
 
+
 	/**
 	 * 解析服務器URL伪静态
 	 * @return String
@@ -54,7 +55,31 @@ class Xbphp  {
 		if(!in_array($obj,self::$init)){
 			self::$init[$obj] = new $obj();
 		}
+		var_dump(self::$init);
 		return self::$init[$obj];
+	}
+
+	/**
+	 * 获取框架加载完成的消耗的内存
+	 * @return int
+	 * @author wave
+	 */
+	public static function endMemory() {
+		return memory_get_usage(true);
+	}
+
+	/**
+	 * 获取框架消耗的内存
+	 * @return string
+	 * @author wave
+	 */
+	public static function memory($end = ''){
+		if(!empty($end)) {
+			$size = $end - START_MEMORY;
+			$unit = array('b','kb','mb','gb','tb','pb'); 
+			return round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i]; 
+		} 
+		
 	}
 
 	/**
@@ -91,7 +116,6 @@ class Xbphp  {
 					}
 					$url = '?'.http_build_query($dataArr);
 				}
-				return $url;
 				break;
 			case 2:
 				if(strpos($url, '&') !== false){
@@ -103,9 +127,9 @@ class Xbphp  {
 					}
 					$url = $str;
 				}
-				return $url;
 				break;
 		}
+		return $url;
 	}
 
 

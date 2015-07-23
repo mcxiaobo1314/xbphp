@@ -24,6 +24,9 @@ class IndexController extends AppController{
 
 
 	public function test($id = null,$uid = null) {
+		//获取框架占用的内存
+		//echo Xbphp::memory(Xbphp::endMemory());
+		
 		//需要统一控制,可以自己定义一个全局变量来控制
 		//Xbphp::toUrl('写要访问的URL','1是动态,2是伪静态','要定义的键名') 
 		//该例子演示动态URL转换伪静态
