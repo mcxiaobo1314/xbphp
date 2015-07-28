@@ -122,6 +122,24 @@ class Controller {
 	}
 
 	/**
+	 * 获取跨控制器获取数据
+	 * @param string $url 请求串
+	 * @return data
+	 */
+	public function requestAction($url = '') {
+		$option = array();
+		if(empty($url)) return false;
+		$urlArr = array_values(array_filter(explode('/',$url)));
+		if(!load($urlArr[0].'Controller.php',APP_PATH.DS.ROOT_CONTROLLER.DS)) return false;
+		if(!class_exists($urlArr[0].'Controller')) return false;
+		$obj = Xbphp::run_cache($urlArr[0].'Controller');
+		if(!method_exists($obj, $urlArr[1])) return false;
+		$option = str_replace(array($urlArr[0],$urlArr[1]),'', $urlArr);
+		$option = array_values(array_filter($option));
+		return call_user_func_array(array($obj,$urlArr[1]),$option);
+	}
+
+	/**
 	 * 改变$this->uses引入的模型，在字符大写加下划线并转换小写
 	 * @param string $model 要改变的模型名字
 	 * @param string &$model_tem 保存原来的模型名字的地址
