@@ -86,8 +86,8 @@ class App
 		if(empty($request))  {
 			return '';
 		}
-		
-		if(preg_match($route[$op][rtrim($controller,'Controller.php')][$action], http_build_query($request),$arr)) {
+		$request = ($op === 'rewirte') ?  $request : http_build_query($request);
+		if(preg_match($route[$op][rtrim($controller,'Controller.php')][$action],$request,$arr)) {
 			$request = array_values(array_filter(array_splice($arr,0,1)));
 		}else {
 		 	load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl');
