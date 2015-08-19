@@ -42,10 +42,9 @@ class App
 		if(!empty($action) && !empty($controller)) {
 			if(load($controller,APP_PATH.DS.ROOT_CONTROLLER)) {
 				$controller_name = isset($params[M]) ? $params[M] : $params['0'];
-				$name = $controller_name.'Controller';
-				$xb = Xbphp::run_cache($name);
+				$xb = Xbphp::run_cache($controller_name.'Controller');
 			}
-			
+
 			if(isset($xb) && method_exists($xb,$action)) {
 				$paramArr = self::replaceArr(array($controller_name,$action),'',$params);
 				$request = isset($params['params']) ? $params['params'] : $paramArr;
@@ -58,16 +57,11 @@ class App
 
 				//动态url规则
 				if(empty($num) && isset($route['trends'][rtrim($controller,'Controller.php')][$action])) {
-					$str = '';
-					foreach($request as $k => $v) {
-						$str .= $k.'/'.$v.'/';
-					}
-					$request = rtrim($str,'/');
 					$this->route('trends',$request,$route,$controller,$action);
 				}
 				call_user_func_array(array($xb,$action),$request);
 			}else {
-				return load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'); 
+				load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'); 
 				exit;
 			}
 		}else {
@@ -81,14 +75,6 @@ class App
 	}
 
 	/**
-	 * 程序运行(使用單例初始化程序)
-	 * @author wave
-	 */
-	public static function Run() {
-		return Xbphp::run_cache('App');
-	}
-
-	/**
 	 * 设置路由规则
 	 * @param string $op 
 	 * @param Array $request 请求的参数
@@ -97,7 +83,11 @@ class App
 	 * @param string $action
 	 */
 	protected function route($op,&$request,$route,$controller,$action) {
-		if(preg_match($route[$op][rtrim($controller,'Controller.php')][$action], $request,$arr)) {
+		if(empty($request))  {
+			return '';
+		}
+		
+		if(preg_match($route[$op][rtrim($controller,'Controller.php')][$action], http_build_query($request),$arr)) {
 			$request = array_values(array_filter(array_splice($arr,0,1)));
 		}else {
 		 	load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl');
