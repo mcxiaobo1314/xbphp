@@ -107,9 +107,9 @@
 				' ' . $this->params['joins'] . 
 				' ' . $this->params['where'] . 
 				' ' . $this->params['group'] . 
+				' ' . $this->params['having'].
 				' ' . $this->params['order'] . 
 				' ' . $this->params['limit'];
-			var_dump($sql);
 		return $this->query($sql);
 	}
 
@@ -251,6 +251,26 @@
 			$this->params['fields'] = rtrim($this->params['fields'],',');
 		}else{
 			$this->params['fields'] =  $fields;
+		}
+		return $this;
+	}
+
+	/**
+	 * having
+	 * @param Array or string $having
+	 * @return object
+	 * @author wave
+	 */
+	public function having($having) {
+		$this->params['having'] = !empty($having) ?  'having ' : '';
+		if(is_array($having)){
+			foreach($having as $k => $v) {
+				$k = $this->packsign($k);
+				$this->params['having'] .= '(' . $k . '"' . $v . '") and';
+			}
+			$this->params['having'] = rtrim($this->params['having'],'and');
+		}else {
+			$this->params['having'] .= $having;
 		}
 		return $this;
 	}
@@ -498,6 +518,7 @@
 		$this->params['joins'] = isset($this->params['joins']) ? $this->params['joins'] : '';
 		$this->params['where'] = isset($this->params['where']) ? $this->params['where'] : '';
 		$this->params['group'] = isset($this->params['group']) ? $this->params['group'] : '';
+		$this->params['having'] = isset($this->params['having']) ? $this->params['having'] : '';
 		$this->params['order'] = isset($this->params['order']) ? $this->params['order'] : '';
 		$this->params['limit'] = isset($this->params['limit']) ? $this->params['limit'] : '';
 	}
