@@ -13,8 +13,6 @@ class App
 	 */
 	public function __construct() {
 		$params = self::getUrl();  //獲取URL參數數組
-		$controller = null; //控制器路径
-		$name = null;       //控制器名称
 		$request = array(); //URL的参数
 		$num = 0; //动态URL访问
 		//动态的URL的路由器
@@ -86,7 +84,14 @@ class App
 		if(empty($request))  {
 			return '';
 		}
+		
 		$request = ($op === 'rewirte') ?  $request : http_build_query($request);
+		
+		if(!isset($route[$op][rtrim($controller,'Controller.php')][$action])) {
+			load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl');
+		 	exit;
+		}
+
 		if(preg_match($route[$op][rtrim($controller,'Controller.php')][$action],$request,$arr)) {
 			$request = array_values(array_filter(array_splice($arr,0,1)));
 		}else {
