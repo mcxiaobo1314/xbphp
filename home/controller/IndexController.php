@@ -22,13 +22,11 @@ class IndexController extends AppController{
 		parent::_initialize();
 	}
 
-
 	public function test($id = null,$uid = null) {
 		//控制器里面的公有方法可以互相访问;访问other控制器里面的aaa方法
 		// $a = $this->requestAction('/other/aaa');
 		// var_dump($a);
-
-
+		
 		//获取框架占用的内存
 		//echo Xbphp::memory(Xbphp::endMemory());
 		
@@ -37,7 +35,7 @@ class IndexController extends AppController{
 		//该例子演示动态URL转换伪静态
 		//Xbphp::toUrl('?m=Index&a=test&a=aaa&c=dddd',2,array('2'=>'cid','3'=>'did'));
 		//该例子演示了伪静态转换成动态URL
-		//Xbphp::toUrl('/Index/test/aaa/dddd/',1,array('2'=>'cid','3'=>'did')); 
+		//Xbphp::toUrl('/Index/test/aaa/dddd/',1,array('2'=>'cid','3'=>'did'));
 
 		//调用phprpc,需要先加载组件,使用的是phprpc3.0.1 版本
 		//服务端调用底下示例: 
@@ -53,8 +51,6 @@ class IndexController extends AppController{
 		// 	var_dump($this->BcWz->error);
 		// }
 
-		// echo $id."<br>";
-		// echo $uid."<br>";
 		//这个还是有问题
 		// $this->BcWz->test();
 		//加载模型也可以自己手动加载
@@ -70,20 +66,21 @@ class IndexController extends AppController{
 		//$this->加载模型第一个参数->find();
 
 		//字段默認是查詢全部
-		// $fields = array('bc_wz.bc_id','bc_wz.bc_title'); 
+		// $fields = array('BcWz.bc_id','BcWz.bc_title'); 
 		//联表查询
 		// $joins = array(
 		// 	array(
 		// 		'type' => 'left',
 		// 		'table' => 'bc_test',
+		//		'fileds' => '`BcTest`.`bc_id`',
 		// 		'alias' => 'BcTest',
-		// 		'where' => 'BcTest.id =bc_wz.bc_id'
+		// 		'where' => 'BcTest.id =BcWz.bc_id'
 		// 	)
 		// );
 		//条件
-		// $where['bc_wz.bc_id >='] = 4;
+		// $where['BcWz.bc_id >='] = 4;
 		//分组
-		// $group = array('bc_wz.bc_id');
+		// $group = array('BcWz.bc_id');
 		//执行查询语句
 		// $data = $this->BcWz
 		// 		->where($where)
@@ -227,7 +224,7 @@ class IndexController extends AppController{
 		// 	'a' => 'cccc'
 		// ));
 
-		echo 'hello xbphp';
+		$this->view->display('index');
 
 		//引入文件,以绝对路径的方式引入
 		//第一个参数文件名,第二个参数文件的路径
@@ -307,6 +304,86 @@ class IndexController extends AppController{
 		//Socket::read();
 		//关闭连接
 		//Socket::colse();
+	}
+
+	public function about() {
+		$this->view->display('about');
+	}
+
+	public function lists() {
+		$this->view->display('article/list');
+	}
+
+	public function article($id = null) {
+		if(empty($id)) {
+			$id = 1;	
+		}
+		$this->view->display('article/'.$id);
+	}
+
+
+	public function weidunjiemi() {
+		$this->view->display('jm');
+		//判断临时文件存放路径是否包含用户上传的文件
+		if(!empty($_FILES["uploadfile"]["tmp_name"]) && is_uploaded_file(@$_FILES["uploadfile"]["tmp_name"])){
+			//为了更高效，将信息存放在变量中
+			$upfile=$_FILES["uploadfile"];//用一个数组类型的字符串存放上传文件的信息
+			//print_r($upfile);//如果打印则输出类似这样的信息Array ( [name] => m.jpg [type] => image/jpeg [tmp_name] => C:\WINDOWS\Temp\php1A.tmp [error] => 0 [size] => 44905 )
+			$name=$upfile["name"];//便于以后转移文件时命名
+			$dArr = explode('.', $name);
+			if($dArr[count($dArr) - 1] !== 'php') {
+				echo '请上传PHP文件';exit;
+			}
+			$type=$upfile["type"];//上传文件的类型
+			$size=$upfile["size"];//上传文件的大小
+			$size = $upfile["size"] / 1024;
+			if($size > 300) {
+				echo '上传的文件不能大于300KB';exit;
+			}
+			$tmp_name=$upfile["tmp_name"];//用户上传文件的临时名称
+			$error=$upfile["error"];//上传过程中的错误信息
+			//echo $name;
+
+			//如果文件符合要求并且上传过程中没有错误
+			if($error=='0'){
+				$path = ROOT.DS.APP_PATH.DS.'update'.DS.date('Y').DS.date('m').DS.date('d').DS;
+				if(!file_exists($path)) {
+					mkdirs('update'.DS.date('Y').DS.date('m').DS.date('d').DS);
+				}
+				//调用move_uploaded_file（）函数，进行文件转移
+				$filename=$path.md5($name.rand(1000,999999).date('YmdHis')).'.txt';
+				move_uploaded_file($tmp_name,$filename);
+				//操作成功后，提示成功
+				//echo "<script language=\"javascript\">alert('succeed')</script>";
+
+				$lines = file($filename);//0,1,2行
+
+
+				//第一次base64解密 
+				$content=""; 
+				if(!empty($lines) && isset($lines[1]) && preg_match("/O0O0000O0\('.*'\)/",$lines[1],$y)) 
+				{
+				 $content=str_replace("O0O0000O0('","",$y[0]);     
+				 $content=str_replace("')","",$content);     
+				 $content=base64_decode($content); 
+				}else {
+					echo '请上传威盾加密文件';exit;
+				}
+				//第一次base64解密后的内容中查找密钥 
+				$decode_key=""; 
+				if(!empty($content)  && preg_match("/\),'.*',/",$content,$k)) 
+				{  
+					$decode_key=str_replace("),'","",$k[0]);     
+					$decode_key=str_replace("',","",$decode_key); 
+				}
+				//截取文件加密后的密文 
+				$Secret=substr($lines[2],380); 
+				//echo $Secret; 
+
+				//直接还原密文输出 
+				echo "解密后的代碼:<textarea cols=\"150\" rows=\"1000000\" style=\"overflow:auto\"><?php\n".htmlspecialchars(base64_decode(strtr($Secret, $decode_key, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/")))."?></textarea>";
+			}
+		}
 	}
 	
 
