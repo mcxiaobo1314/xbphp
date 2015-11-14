@@ -105,7 +105,7 @@ class Controller {
 			//改变$this->uses引入模型的名字
 			$model = $this->change_model($model, $model_tem); 
 			if(!isset(Xbphp::$init[$obj_name])) {
-				Xbphp::$init[$obj_name] = new $obj_name($model,$prefix,$connect);
+				Xbphp::$init[$obj_name] = new $obj_name($model,$prefix,$connect,$model_tem);
 			}
 			$model = str_replace('Model', '', get_class(Xbphp::$init[$obj_name]));
 			$model = isset($model_tem) ? $model_tem : $obj_name;
@@ -113,7 +113,7 @@ class Controller {
 		}else {
 			$model = $this->change_model($model, $model_tem);
 			if(!isset(Xbphp::$init[$model])) {
-				Xbphp::$init[$model] = new Model($model,$prefix,$connect);
+				Xbphp::$init[$model] = new Model($model,$prefix,$connect,$model_tem);
 			}
 			$model_name = isset($model_tem) ? $model_tem : $model;
 			$this->$model_name = Xbphp::$init[$model];

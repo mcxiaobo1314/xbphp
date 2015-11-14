@@ -13,6 +13,9 @@
 	//表名
 	protected $name = null;
 
+	//別名
+	protected $alias = null;
+
 	//表名前缀
 	protected $prefix = null;
 
@@ -33,15 +36,17 @@
 
 	/**
 	 * 自动初始化
-	 * @param null $name  表名
-	 * @param null $prefix 前缀
-	 * @param null $connect 连接数据库的类型
+	 * @param string $name  表名
+	 * @param string $prefix 前缀
+	 * @param string $connect 连接数据库的类型
+	 * @param string $alias 连接数据库的类型
 	 * @author wave
 	 */
-	public function __construct($name = null,$prefix = null,$connect = null) {
+	public function __construct($name = null,$prefix = null,$connect = null,$alias = null) {
 		$this->_initialize();
 		$this->prefix = $prefix;
 		$this->name = $this->prefix.$name;
+		$this->alias = $alias;
 		$this->connect = $connect;
 		if(empty(self::$db)) { //防止多次加載
 			load('config.php',APP_PATH.DS.DATABASE); //数据库配置文件
@@ -102,14 +107,22 @@
 	public function find() {
 		$this->_isset();
 		$this->bind();
+		if(isset($this->params['alias'])) {
+			$tkey = array_keys($this->params['alias']);
+			$tvalue = array_values($this->params['alias']);
+			$this->params['fields'] = str_replace($tkey, $tvalue, $this->params['fields']);
+		}
+
+		$this->alias =  !empty($this->alias) ? ' as '.$this->alias.' ' : '';
 		$sql = 'select '. $this->params['fields'] . 
-				' from ' . $this->name . 
+				' from ' . $this->name . $this->alias .
 				' ' . $this->params['joins'] . 
 				' ' . $this->params['where'] . 
 				' ' . $this->params['group'] . 
 				' ' . $this->params['having'].
 				' ' . $this->params['order'] . 
 				' ' . $this->params['limit'];
+				var_dump($sql);
 		return $this->query($sql);
 	}
 
@@ -174,7 +187,9 @@
 			$str = '';
 			$arr = array();
 			foreach($data as $k => $v) {
-				if(!isset($arr[$v['key']]))  $arr[$v['key']]= '';
+				if(!isset($arr[$v['key']])) {
+					$arr[$v['key']]= '';
+				} 
 				$arr[$v['key']]['where'] .= ' WHEN '.$v['where'].' THEN "'.$v['value'].'" ';	
 			}
 			if(!empty($arr)) {
@@ -224,10 +239,11 @@
 	 */
 	public function where($where){
 		$this->params['where'] = !empty($where) ?  'where ' : '';
+		$alias = !empty($this->alias) ? $this->alias : $this->name;
 		if(is_array($where)){
 			foreach($where as $k => $v) {
 				$k = $this->packsign($k);
-				$this->params['where'] .= '(' . $k . '"' . $v . '") and';
+				$this->params['where'] .= '(`'.$alias . '`.' . $k . '"' . $v . '") and';
 			}
 			$this->params['where'] = rtrim($this->params['where'],'and');
 		}else {
@@ -246,7 +262,7 @@
 		$this->params['fields'] = null;
 		if(is_array($fields)){
 			foreach($fields as $key => $value) {
-				$this->params['fields'] .= $value . ',';
+				$this->params['fields'] .= '`'.$this->name . '`.'. $value . ',';
 			}
 			$this->params['fields'] = rtrim($this->params['fields'],',');
 		}else{
@@ -263,10 +279,11 @@
 	 */
 	public function having($having) {
 		$this->params['having'] = !empty($having) ?  'having ' : '';
+		$alias = !empty($this->alias) ? $this->alias : $this->name;
 		if(is_array($having)){
 			foreach($having as $k => $v) {
 				$k = $this->packsign($k);
-				$this->params['having'] .= '(' . $k . '"' . $v . '") and';
+				$this->params['having'] .= '(`' . $alias . '`.' . $k . '"' . $v . '") and';
 			}
 			$this->params['having'] = rtrim($this->params['having'],'and');
 		}else {
@@ -283,9 +300,16 @@
 	 */
 	public function joins($joins) {
 		$this->params['joins'] = null;
+		$this->params['alias'] = array();
 		if(is_array($joins)) {
 			foreach($joins as $key => $val) {
-				$this->params['joins'] .= $val['type'] .' join `' . $val['table'] . '` as `' . $val['alias'] . '` on ' . $val['where'] . ' ';
+				isset($val['fileds']) ? $this->params['alias']['fileds'] = $val['fileds'] : '';
+				if(isset($val['alias'])){
+					$this->params['alias'][$val['table']] = $val['alias'];
+					$this->params['joins'] .= $val['type'] .' join `' . $val['table'] . '` as `' . $val['alias'] . '` on ' . $val['where'] . ' ';
+				}else {
+					$this->params['joins'] .= $val['type'] .' join `' . $val['table'] . '` on ' . $val['where'] . ' ';
+				}
 			}
 		}else {
 			$this->params['joins'] = $joins;
@@ -407,7 +431,7 @@
 			if(strpos($sql, 'select') !== false || strrpos($sql, 'show') !== false){
 				$query = self::$db->query($sql);
 				if($query){
-					$data = $query->fetchAll();
+					$data = $query->fetchAll(PDO::FETCH_ASSOC);
 				}
 			}else {
 				//执行操作语句
@@ -502,9 +526,9 @@
 		if(preg_match('/(\<|\>|\>\=|\<=|\<\>)/', $params))
 		{
 			$fh = array_filter(explode(' ', $params));
-			$params = $fh['0'].' '.$fh['1'];
+			$params = '`'.$fh['0'].'` '.$fh['1'];
 		}else {
-			$params = $params.'=';
+			$params = '`'.$params.'`=';
 		}
 		return $params;
 	}
@@ -521,6 +545,8 @@
 		$this->params['having'] = isset($this->params['having']) ? $this->params['having'] : '';
 		$this->params['order'] = isset($this->params['order']) ? $this->params['order'] : '';
 		$this->params['limit'] = isset($this->params['limit']) ? $this->params['limit'] : '';
+		$this->params['alias'] = isset($this->params['alias']) ? $this->params['alias'] : '';
+		$this->params['fields'] .=	isset($this->params['alias']['fileds']) ? ','.$this->params['alias']['fileds'] : '';
 	}
 
 	/**
@@ -542,8 +568,9 @@
 
 		if($data) {
 			$_fields = '';
+			$alias = !empty($this->alias) ? $this->alias : $this->name;
 			foreach($data as $k => $v) {
-				$_fields .= '`'.$this->name.'`.`'.$v['Field'] . '`,';
+				$_fields .= '`'.$alias.'`.`'.$v['Field'] . '`,';
 			}
 		}
 		
