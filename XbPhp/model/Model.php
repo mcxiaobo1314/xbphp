@@ -261,7 +261,7 @@
 		$this->params['fields'] = null;
 		if(is_array($fields)){
 			foreach($fields as $key => $value) {
-				$this->params['fields'] .= '`'.$this->name . '`.'. $value . ',';
+				$this->params['fields'] .= $value . ',';
 			}
 			$this->params['fields'] = rtrim($this->params['fields'],',');
 		}else{
