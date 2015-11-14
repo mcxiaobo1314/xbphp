@@ -122,7 +122,6 @@
 				' ' . $this->params['having'].
 				' ' . $this->params['order'] . 
 				' ' . $this->params['limit'];
-				var_dump($sql);
 		return $this->query($sql);
 	}
 
