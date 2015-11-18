@@ -9,7 +9,7 @@ class SessionComponent
 	{
 		session_start();
 		$session = SESSIONS;
-		if(!empty($session))
+		if(isset($session))
 		{
 			$this->_set_path();
 		}	
@@ -24,7 +24,7 @@ class SessionComponent
 	 */
 	public function write($name,$value)
 	{
-		if(!empty($name) && !empty($value))
+		if(isset($name) && isset($value))
 		{
 			$_SESSION[$name] = $value;
 			return true;
@@ -39,7 +39,7 @@ class SessionComponent
 	 */
 	public function read($name) 
 	{
-		if(!empty($name)) 
+		if(isset($name)) 
 		{
 			return $_SESSION[$name];
 		}
@@ -53,7 +53,7 @@ class SessionComponent
 	 */
 	public function delete($name)
 	{
-		if(!empty($name))
+		if(isset($name))
 		{
 			unset($name);
 			return true;
@@ -67,7 +67,7 @@ class SessionComponent
 	 */
 	public function destroy() 
 	{
-		if(!empty($_SESSION))
+		if(isset($_SESSION))
 		{
 			session_destroy();
 			session_unset();
@@ -83,7 +83,7 @@ class SessionComponent
 	 */
 	public function id()
 	{
-		if(!empty($_SESSION))
+		if(isset($_SESSION))
 		{
 			return session_id();
 		}

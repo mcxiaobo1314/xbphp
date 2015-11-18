@@ -18,7 +18,7 @@ class CookieComponent
 	 */
 	public function write($name , $value = null , $expire = null , $path = '/' , $domain = null) 
 	{
-		if(!empty($name))
+		if(isset($name))
 		{
 			setcookie($name,$value,$expire,$path,$domain);
 			return true;
@@ -33,7 +33,7 @@ class CookieComponent
 	 */
 	public function read($name) 
 	{
-		if(!empty($name)) 
+		if(isset($name)) 
 		{
 			return $_COOKIE[$name];
 		}
@@ -47,7 +47,7 @@ class CookieComponent
 	 */
 	public function delete($name) 
 	{
-		if(!empty($name)) {
+		if(isset($name)) {
 			$this->write($name,'',0);
 			return true;
 		}
