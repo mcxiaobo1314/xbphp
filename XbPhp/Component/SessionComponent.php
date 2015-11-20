@@ -39,7 +39,7 @@ class SessionComponent
 	 */
 	public function read($name) 
 	{
-		if(isset($name)) 
+		if(isset($_SESSION[$name])) 
 		{
 			return $_SESSION[$name];
 		}
@@ -53,9 +53,9 @@ class SessionComponent
 	 */
 	public function delete($name)
 	{
-		if(isset($name))
+		if(isset($_SESSION[$name]))
 		{
-			unset($name);
+			unset($_SESSION[$name]);
 			return true;
 		}
 		return false;
