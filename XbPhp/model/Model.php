@@ -522,7 +522,7 @@
 	 */
 	protected function packsign($params)
 	{
-		if(preg_match('/(\<|\>|\>\=|\<=|\<\>)/', $params))
+		if(preg_match('/(\<|\>|\>\=|\<=|\<\>|like)/', $params))
 		{
 			$fh = array_filter(explode(' ', $params));
 			$params = '`'.$fh['0'].'` '.$fh['1'];
