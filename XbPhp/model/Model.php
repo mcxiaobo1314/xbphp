@@ -39,7 +39,7 @@
 	 * @param string $name  表名
 	 * @param string $prefix 前缀
 	 * @param string $connect 连接数据库的类型
-	 * @param string $alias 连接数据库的类型
+	 * @param string $alias 別名
 	 * @author wave
 	 */
 	public function __construct($name = null,$prefix = null,$connect = null,$alias = null) {
