@@ -15,6 +15,7 @@ class Xbphp  {
 	 * @author wave
 	 */
 	public static function getServerUrl() {
+		header("X-Powered-By:XbPHP");
 		if(!empty($_SERVER['ORIG_PATH_INFO'])) {
 			$url = $_SERVER['ORIG_PATH_INFO'];
 		//windows or linux  nginx apache属性
