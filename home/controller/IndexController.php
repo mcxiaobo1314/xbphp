@@ -223,8 +223,8 @@ class IndexController extends AppController{
 		// $this->view->render('',array(
 		// 	'a' => 'cccc'
 		// ));
-
-		$this->view->display('index');
+		echo "欢迎使用xbphp";
+		//$this->view->display('index');
 
 		//引入文件,以绝对路径的方式引入
 		//第一个参数文件名,第二个参数文件的路径
