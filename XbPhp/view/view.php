@@ -88,6 +88,18 @@ class view
 		
 		extract($array);
 		require $file_path;
+
+	}
+
+	/**
+	 * layout渲染模版
+	 * @param Array $array  自定义模版变量
+	 * @param string $templateFile 模版路径
+	 * @author wave
+	 */
+	public function renderLayout($array = array(),$templateFile = null) {
+		$file_path = $this->root.DS.'layout'.DS."index.php";
+		require $file_path;
 	}
 
 	/**

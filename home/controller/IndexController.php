@@ -223,8 +223,11 @@ class IndexController extends AppController{
 		// $this->view->render('',array(
 		// 	'a' => 'cccc'
 		// ));
+
+		//這個是layout引入模版,可以让头部和底部公用
+		//$this->view->renderLayout(array('a'=>"aaa"),'1.php');
+
 		echo "欢迎使用xbphp";
-		//$this->view->display('index');
 
 		//引入文件,以绝对路径的方式引入
 		//第一个参数文件名,第二个参数文件的路径
