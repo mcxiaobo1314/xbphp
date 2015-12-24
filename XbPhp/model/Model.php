@@ -186,11 +186,14 @@
 			$str = '';
 			$arr = array();
 			foreach($data as $k => $v) {
-				if(!isset($arr[$v['key']])) {
-					$arr[$v['key']]= '';
-				} 
-				$arr[$v['key']]['where'] .= ' WHEN '.$v['where'].' THEN "'.$v['value'].'" ';	
+				if(empty($arr) && isset($v['key'])) {
+					$arr[$v['key']] = ' WHEN '.$v['where'].' THEN "'.$v['value'].'" ';
+				}
+				if(!empty($v['key']) && !isset($arr[$v['key']])) {
+					$arr[$v['key']] = ' WHEN '.$v['where'].' THEN "'.$v['value'].'" ';	
+				}
 			}
+
 			if(!empty($arr)) {
 				foreach ($arr as $key => $value) {
 					$str .=  '`'.$key.'` = (CASE' .$value.' else `'.$key.'` END),';
