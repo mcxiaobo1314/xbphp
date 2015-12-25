@@ -25,24 +25,27 @@ class Xbphp  {
 			$url = $_SERVER['REQUEST_URI'];
 		}
 		
-		$params =  explode('/',ltrim(strip_tags($url),'/'));
-		if(strtolower($params['0']) == strtolower(basename(ROOT))) {
-			array_splice($params,0,1);
-		}
-		if(strpos($params[count($params) - 1],'.') !== false) {
-			$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'.'));
-			$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
+		$params = (strpos($url, '/') !== false) ? explode('/',ltrim(strip_tags($url),'/')) : '';
+		if(!empty($params)) {
+			if(strtolower($params['0']) == strtolower(basename(ROOT))) {
+				array_splice($params,0,1);
+			}
+			if(strpos($params[count($params) - 1],'.') !== false) {
+				$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'.'));
+				$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
+			}
+
+			if(strpos($params[count($params) - 1],'?') !== false) {
+				$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'?'));
+				$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
+			}
+			 //删除目录文件
+			if(isset($params['0']) && strtolower($params['0']) == strtolower(APP_PATH)) {
+				array_splice($params,0,1);
+			}
 		}
 
-		if(strpos($params[count($params) - 1],'?') !== false) {
-			$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'?'));
-			$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
-		}
-		 //删除目录文件
-		if(isset($params['0']) && strtolower($params['0']) == strtolower(APP_PATH)) {
-			array_splice($params,0,1);
-		}
-		return array_values(array_filter($params));
+		return is_array($params) ? array_values(array_filter($params)) : '';
 	}
 
 
