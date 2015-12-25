@@ -25,7 +25,7 @@ class Xbphp  {
 			$url = $_SERVER['REQUEST_URI'];
 		}
 		
-		$params = (strpos($url, '/') !== false) ? explode('/',ltrim(strip_tags($url),'/')) : '';
+		$params = !empty($url) ? explode('/',ltrim(strip_tags($url),'/')) : '';
 		if(!empty($params)) {
 			if(strtolower($params['0']) == strtolower(basename(ROOT))) {
 				array_splice($params,0,1);
