@@ -94,7 +94,7 @@
 	 * @author wave
 	 */
 	public function __destruct() {
-		$this->params = array();
+		unset($this->params);
 	}
 
 
@@ -454,6 +454,7 @@
 		return $data;
 	}
 
+
 	/**
 	 * PDO预处理命令
 	 * @param string  $sql 执行语句
@@ -461,6 +462,7 @@
 	 */
 	public function prepares($sql) {
 		if(is_string($sql)) {
+			self::$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 			$sql = str_replace('%table%', $this->name, $sql);
 			$this->params['prepare'] = self::$db->prepare($sql);
 			return $this->params['prepare'];
