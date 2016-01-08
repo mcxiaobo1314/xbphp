@@ -403,6 +403,15 @@
 		}
 	}
 
+	/**
+	 * 执行sql
+	 * @param string  $sql SQL语句
+	 * @return resource
+	 * @author wave
+	 */
+	public static function execute($sql) {
+		return $this->query($sql);
+	}
 
 	/**
 	 * 执行sql

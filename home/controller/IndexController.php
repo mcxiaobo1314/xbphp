@@ -26,6 +26,10 @@ class IndexController extends AppController{
 		//控制器里面的公有方法可以互相访问;访问other控制器里面的aaa方法
 		// $a = $this->requestAction('/other/aaa');
 		// var_dump($a);
+
+		//執行原生SQL語句寫法
+		//$data = Model::execute('select * from config');
+		//var_dump($data);
 		
 		//获取框架占用的内存
 		//echo Xbphp::memory(Xbphp::endMemory());
