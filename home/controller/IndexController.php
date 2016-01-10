@@ -223,6 +223,9 @@ class IndexController extends AppController{
 		//$this->view->suffix = '.html';
 		//echo $this->view->compile_time;
 
+		//获取文件代码
+		//echo $this->view->renderHtml(array(),'header');
+
 		//无编译进行渲染模版模版里面就写echo $a
 		// $this->view->render('',array(
 		// 	'a' => 'cccc'

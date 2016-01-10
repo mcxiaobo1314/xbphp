@@ -85,10 +85,14 @@ class view
 		if(strpos($tmpfile, '.') !== false) {
 			$file_path = $this->root.ROOT_VIEW.DS.$tmpfile;
 		}
-		
+
+		if(!file_exists($file_path)) {
+			load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'); 
+			exit;
+		}
+
 		extract($array);
 		require $file_path;
-
 	}
 
 	/**
@@ -100,6 +104,22 @@ class view
 	public function renderLayout($array = array(),$templateFile = null) {
 		$file_path = $this->root.DS.'layout'.DS."index.php";
 		require $file_path;
+	}
+
+	/**
+	 * 引入模版返回代碼
+	 * @param Array $array  自定义模版变量
+	 * @param string $templateFile 模版路径
+	 * @return HTML
+	 * @author wave
+	 */
+	public function renderHtml($array = array(),$templateFile = null) {
+		ob_start();
+		$this->render($array,$templateFile);
+		$content = ob_get_contents();
+		ob_clean();
+		return $content;
+
 	}
 
 	/**
@@ -169,7 +189,7 @@ class view
 	 * 替换输出
 	 * 例子<{$a}>
 	 * @param string $html 要替换的HTML
-	 * @return html
+	 * @return resource
 	 * @author wave
 	 */
 	private function _echo($html) {
