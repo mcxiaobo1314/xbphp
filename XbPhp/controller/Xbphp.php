@@ -26,25 +26,24 @@ class Xbphp  {
 		}
 		
 		$params = !empty($url) ? explode('/',ltrim(strip_tags($url),'/')) : '';
-		if(!empty($params)) {
-			if(strtolower($params['0']) == strtolower(basename(ROOT))) {
-				array_splice($params,0,1);
-			}
+		if(!empty($params) && isset($params[count($params) - 1])) {
 			if(strpos($params[count($params) - 1],'.') !== false) {
 				$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'.'));
 				$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
 			}
 
-			if(strpos($params[count($params) - 1],'?') !== false) {
+			if( strpos($params[count($params) - 1],'?') !== false) {
 				$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'?'));
 				$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
 			}
-			 //删除目录文件
-			if(isset($params['0']) && strtolower($params['0']) == strtolower(APP_PATH)) {
-				array_splice($params,0,1);
-			}
 		}
-
+		if(isset($params[0]) && strtolower($params[0]) == strtolower(basename(ROOT))) {
+			unset($params[0]);
+		}
+		 //删除目录文件
+		if(isset($params['0']) && strtolower($params['0']) == strtolower(APP_PATH)) {
+			array_slice($params,0,1);
+		}
 		return is_array($params) ? array_values(array_filter($params)) : '';
 	}
 
