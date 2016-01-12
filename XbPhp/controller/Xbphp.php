@@ -37,7 +37,7 @@ class Xbphp  {
 				$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
 			}
 		}
-		if(isset($params[0]) && strtolower($params[0]) == strtolower(basename(ROOT))) {
+		if(isset($params[0]) && strtolower($params[0]) == strtolower(basename(ROOT)) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') !== false) {
 			unset($params[0]);
 		}
 		 //删除目录文件
