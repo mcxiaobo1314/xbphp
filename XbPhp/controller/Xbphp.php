@@ -26,24 +26,27 @@ class Xbphp  {
 		}
 		
 		$params = !empty($url) ? explode('/',ltrim(strip_tags($url),'/')) : '';
-		if(!empty($params) && isset($params[count($params) - 1])) {
-			if(strpos($params[count($params) - 1],'.') !== false) {
+		if(isset($params[0]) && strtolower($params[0]) == strtolower(basename(ROOT))) {
+			$params = array_pop($params);
+		}
+		if(!empty($params) && isset($params[count($params) - 1]) ) {
+			$arr =array_filter(explode('/',$params[count($params) - 1]));
+			if(count($arr) >=1  && strpos($params[count($params) - 1],'.') !== false) {
 				$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'.'));
 				$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
 			}
-
-			if( strpos($params[count($params) - 1],'?') !== false) {
+			
+			if(count($arr) >=1  && strpos($params[count($params) - 1],'?') !== false) {
 				$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'?'));
 				$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
 			}
 		}
-		if(isset($params[0]) && strtolower($params[0]) == strtolower(basename(ROOT)) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') !== false) {
-			unset($params[0]);
-		}
+
 		 //删除目录文件
 		if(isset($params['0']) && strtolower($params['0']) == strtolower(APP_PATH)) {
-			array_slice($params,0,1);
+			$params = array_pop($params);
 		}
+
 		return is_array($params) ? array_values(array_filter($params)) : '';
 	}
 
