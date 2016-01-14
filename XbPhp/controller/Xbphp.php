@@ -4,11 +4,8 @@
  * @author wave
  */
 class Xbphp  {
-
 	//初始化
 	public static $init = array();
-
-
 	/**
 	 * 解析服務器URL伪静态
 	 * @return String
@@ -24,10 +21,17 @@ class Xbphp  {
 		}elseif(!empty($_SERVER['REQUEST_URI'])) {
 			$url = $_SERVER['REQUEST_URI'];
 		}
-		
+
 		$params = !empty($url) ? explode('/',ltrim(strip_tags($url),'/')) : '';
-		if(isset($params[0]) && strtolower($params[0]) == strtolower(basename(ROOT))) {
-			$params = array_pop($params);
+
+		if(count($params) == 1) {
+			$url_arr = parse_url($url);
+			$params[0] = isset($url_arr['path']) ?  ltrim($url_arr['path'],'/') : '';
+			$params[1] = isset($url_arr['query']) ?  $url_arr['query'] : '';
+		}
+
+		if( isset($params[0]) && strtolower($params[0]) == strtolower(basename(ROOT))) {
+			array_splice($params, 0,1);
 		}
 		if(!empty($params) && isset($params[count($params) - 1]) ) {
 			$arr =array_filter(explode('/',$params[count($params) - 1]));
@@ -41,16 +45,13 @@ class Xbphp  {
 				$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
 			}
 		}
-
 		 //删除目录文件
 		if(isset($params['0']) && strtolower($params['0']) == strtolower(APP_PATH)) {
-			$params = array_pop($params);
+				array_splice($params, 0,1);
+				
 		}
-
-		return is_array($params) ? array_values(array_filter($params)) : '';
+		return (is_array($params) && count($params) > 1)  ? array_values(array_filter($params)) : '';
 	}
-
-
 	/**
 	 * 缓存初始化对象
 	 * @param string $obj 类名
@@ -63,7 +64,6 @@ class Xbphp  {
 		}
 		return self::$init[$obj];
 	}
-
 	/**
 	 * 获取框架加载完成的消耗的内存
 	 * @return int
@@ -72,7 +72,6 @@ class Xbphp  {
 	public static function endMemory() {
 		return memory_get_usage(true);
 	}
-
 	/**
 	 * 获取框架消耗的内存
 	 * @return string
@@ -86,7 +85,6 @@ class Xbphp  {
 		} 
 		
 	}
-
 	/**
 	 * 转跳的URL
 	 * @param string $url 要访问的URL
@@ -136,6 +134,4 @@ class Xbphp  {
 		}
 		return $url;
 	}
-
-
 }
