@@ -16,9 +16,7 @@ define('EXTENSION',2);                                		//可以填写1为MYSQL,
 define('SUFFIX','.html');                                	//定义模版的后缀名字 
 define('LDELIMITER','<{');     		                      	//定义左边界符号   
 define('RDELIMITER','}>');                        		    //定义右边界符号       
-define('DEBUG',true);										//是否打开调试,默认为true为打开,false关闭
-//伪静态规则截取URL的分隔符 如:url/XbPhp/xxx_xxx_xxx
-define('SIGN','/');											
+define('DEBUG',true);										//是否打开调试,默认为true为打开,false关闭									
  /**
   * 0屏蔽错误(建议上线使用0)
   * 1是开启内置的错误信息(调试)
