@@ -69,7 +69,9 @@ class Controller {
 				return (strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') ? true : flase;
 				break;
 			default:
-				return (strtolower($_SERVER['REQUEST_METHOD']) === $val) ? true : false;
+				if(in_array($val, array('post','get'))) {
+					return (strtolower($_SERVER['REQUEST_METHOD']) === $val) ? true : false;
+				}
 				break;
 		}
 	}
