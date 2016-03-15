@@ -49,7 +49,6 @@
 		$this->alias = $alias;
 		$this->connect = $connect;
 		if(empty(self::$db)) { //防止多次加載
-			load('config.php',APP_PATH.DS.DATABASE); //数据库配置文件
 			load('db.class.php',ROOT_PATH);  //加载连接数据库类
 			if(!empty($this->connect)) {
 			 	self::$db  =  !empty($this->connect) ? self::link($this->connect) : 1;   //进行初始化数据

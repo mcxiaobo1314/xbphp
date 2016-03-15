@@ -31,7 +31,9 @@ function __autoload($class_name) {
  * @author wave
  */
 function AutoloadsStatic() {
+	load('config.php',APP_PATH.DS.DATABASE); //数据库配置文件
 	load('Cache.php',ROOT_PATH.DS.CACHE.DS);                 		//缓存
+	load('Redis.php',ROOT_PATH.DS.CACHE.DS);                 		//redis
 	load('Error.php',ROOT_PATH.DS.ROOT_ERROR.DS);					//錯誤
 	load('AppModel.php',APP_PATH.DS.ROOT_MODEL.DS);					//模型
 	load('AppController.php',APP_PATH.DS.ROOT_CONTROLLER.DS);		//控制器
