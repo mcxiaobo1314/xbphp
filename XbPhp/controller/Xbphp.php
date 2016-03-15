@@ -50,7 +50,9 @@ class Xbphp  {
 				array_splice($params, 0,1);
 				
 		}
-		return (is_array($params) && count($params) > 1)  ? array_values(array_filter($params)) : '';
+
+		$params = array_values(array_filter($params));
+		return (is_array($params) && count($params) > 1)  ? $params : '';
 	}
 	/**
 	 * 缓存初始化对象
