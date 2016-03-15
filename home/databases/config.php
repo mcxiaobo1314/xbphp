@@ -4,7 +4,8 @@
  * @author wave
  */			
 class config {
-	//public static $redisStatus = 1; //1为开启初始化redis,0则不初始化redis
+	public static $redisStatus = 0; //1为开启初始化redis,0则不初始化redis
+
 	//mysql配置
 	//  public static $default = array(
 	// 	'host'=>'localhost', 			//数据库主机地址
