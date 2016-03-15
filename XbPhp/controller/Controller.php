@@ -69,9 +69,7 @@ class Controller {
 				return (strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') ? true : flase;
 				break;
 			default:
-				if(in_array($val, array('post','get'))) {
-					return (strtolower($_SERVER['REQUEST_METHOD']) === $val) ? true : false;
-				}
+				return (strtolower($_SERVER['REQUEST_METHOD']) === $val) ? true : false;
 				break;
 		}
 	}
@@ -202,6 +200,7 @@ class Controller {
 		if(class_exists('view')) {
 			$this->view = Xbphp::run_cache('view');
 		}
+
 	}
 
 	/**
@@ -209,6 +208,11 @@ class Controller {
 	 * @author wave
 	 */
 	protected function AtuoLoads() {
+		//加载redis
+		if(!empty(config::$redisStatus)) {
+			$this->redis = Xredis::init();
+		}
+
 		if(!empty($this->uses)) {
 			foreach($this->uses as $val) {
 				$this->loadModel($val);
