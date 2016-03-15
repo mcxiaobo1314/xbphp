@@ -102,6 +102,7 @@ class view
 	 * @author wave
 	 */
 	public function renderLayout($array = array(),$templateFile = null) {
+		extract($array);
 		$file_path = $this->root.DS.'layout'.DS."index.php";
 		require $file_path;
 	}
