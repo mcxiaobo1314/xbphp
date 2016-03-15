@@ -8,7 +8,7 @@ if(version_compare(PHP_VERSION,'5.2.0') < 0) {
 	die('您的PHP版本低于5.2.0,请下载5.2.0以上的版本');
 }
 define('START_MEMORY',memory_get_usage(true)); //获取开始内存
-
+date_default_timezone_set('PRC');
 //定义默认目录
 $root_path = 'home';
 
