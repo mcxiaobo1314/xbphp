@@ -106,8 +106,9 @@
 	public function find() {
 		$this->_isset();
 		$this->bind();
-		if(isset($this->params['alias'])) {
+		if(isset($this->params['alias']) && !empty($this->params['alias'])) {
 			$tkey = array_keys($this->params['alias']);
+
 			$tvalue = array_values($this->params['alias']);
 			$this->params['fields'] = str_replace($tkey, $tvalue, $this->params['fields']);
 		}
