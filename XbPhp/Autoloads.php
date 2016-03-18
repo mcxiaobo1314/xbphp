@@ -18,10 +18,12 @@ function __autoload($class_name) {
 			ROOT.DS.ROOT_PATH.DS.ROOT_VIEW.DS,
 			ROOT.DS.ROOT_PATH.DS.ROOT_COM.DS,
 			ROOT.DS.ROOT_PATH.DS,
+			ROOT.DS.ROOT_PATH.DS.CACHE.DS,
 			// APP_PATH.DS.ROOT_MODEL.DS,
 		);
 	}
 	set_include_path(get_include_path() . PATH_SEPARATOR .implode( PATH_SEPARATOR , $config['include']));
+	var_dump($class_name);
 	include $class_name.'.php';
 }
 
@@ -32,8 +34,6 @@ function __autoload($class_name) {
  */
 function AutoloadsStatic() {
 	load('config.php',APP_PATH.DS.DATABASE); //数据库配置文件
-	load('Cache.php',ROOT_PATH.DS.CACHE.DS);                 		//缓存
-	load('Redis.php',ROOT_PATH.DS.CACHE.DS);                 		//redis
 	load('Error.php',ROOT_PATH.DS.ROOT_ERROR.DS);					//錯誤
 	load('AppModel.php',APP_PATH.DS.ROOT_MODEL.DS);					//模型
 	load('AppController.php',APP_PATH.DS.ROOT_CONTROLLER.DS);		//控制器
