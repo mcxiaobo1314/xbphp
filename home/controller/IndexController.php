@@ -4,6 +4,7 @@
  * 有问题或有建议可以加此群:114252528,底下代码只是测试案例。。。可以作为参考，在使用
  * 结合了cakephp与thinkphp的写法
  * 防注入写法请自行过滤
+ * 查看源代码地址: https://github.com/mcxiaobo1314/xbphp
  * @author wave
  */
 

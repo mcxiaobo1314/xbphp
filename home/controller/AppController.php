@@ -1,6 +1,7 @@
 <?php
 /**
  * 公用控制器
+ * 查看源代码地址: https://github.com/mcxiaobo1314/xbphp
  * @author wave
  */
 
