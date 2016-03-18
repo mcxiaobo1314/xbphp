@@ -210,7 +210,7 @@ class Controller {
 	protected function AtuoLoads() {
 		//加载redis
 		if(isset(config::$redisStatus) && !empty(config::$redisStatus)) {
-			$this->redis = new Xredis();
+			$this->redis = Xredis::init();
 		}
 
 		if(!empty($this->uses)) {

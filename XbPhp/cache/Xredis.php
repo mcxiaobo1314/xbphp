@@ -9,7 +9,7 @@ class Xredis {
 	 * @param string  $host 主机IP
 	 * @param int $port 端口
 	 */
-	public  function __construct() {
+	public static function init() {
 		if(class_exists('Redis')) {
 			$host = !empty(config::$redis['host']) ? config::$redis['host'] : '127.0.0.1';
 			$port = !empty(config::$redis['port']) ? config::$redis['port'] : 6379;
