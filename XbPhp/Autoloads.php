@@ -18,12 +18,10 @@ function __autoload($class_name) {
 			ROOT.DS.ROOT_PATH.DS.ROOT_VIEW.DS,
 			ROOT.DS.ROOT_PATH.DS.ROOT_COM.DS,
 			ROOT.DS.ROOT_PATH.DS,
-			ROOT.DS.ROOT_PATH.DS.CACHE.DS,
-			// APP_PATH.DS.ROOT_MODEL.DS,
+			ROOT.DS.ROOT_PATH.DS.CACHE.DS
 		);
 	}
 	set_include_path(get_include_path() . PATH_SEPARATOR .implode( PATH_SEPARATOR , $config['include']));
-	var_dump($class_name);
 	include $class_name.'.php';
 }
 
