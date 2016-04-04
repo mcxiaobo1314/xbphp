@@ -36,13 +36,11 @@ class Xbphp  {
 		if(!empty($params) && isset($params[count($params) - 1]) ) {
 			$arr =array_filter(explode('/',$params[count($params) - 1]));
 			if(count($arr) >=1  && strpos($params[count($params) - 1],'.') !== false) {
-				$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'.'));
-				$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
+				$params = self::strposReplace($params,'.');
 			}
 			
 			if(count($arr) >=1  && strpos($params[count($params) - 1],'?') !== false) {
-				$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'?'));
-				$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
+				$params = self::strposReplace($params,'?');
 			}
 		}
 		 //删除目录文件
@@ -54,6 +52,20 @@ class Xbphp  {
 		$params = array_values(array_filter($params));
 		return (is_array($params) && count($params) > 1)  ? $params : '';
 	}
+
+	/**
+	 * 截取数组最后一个元素,并替换成空
+	 * @param Array $params  要截取的数组
+	 * @param int $str  要截取的字符穿
+	 * @return Array
+	 * @author wave
+	 */
+	public static function strposReplace($params,$str) {
+		$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'.'));
+		$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
+		return $params;
+	}
+
 	/**
 	 * 缓存初始化对象
 	 * @param string $obj 类名
