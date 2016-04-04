@@ -29,7 +29,9 @@ define('ROOT_ERROR','error');                               //错误信息提示
 define('CACHE','cache');  									//定义缓存文件路径
 define('TEMPLATES','templates_c');                          //编译文件路径
 define('COMP','Component');                                 //组件文件路径 
-define('SESSIONS','sessions');                              //定义SESSION文件路径            
+define('SESSIONS','sessions');                              //定义SESSION文件路径     
+define('ROUTE','route');                              		//定义路由文件路径 
+define('VENDOR','vendor');                              	//定义加载其他类路径          
 define('LOGS','logs');                              		//定义錯誤日記文件路径
 
 //引入方法文件
@@ -88,8 +90,9 @@ if(!load('configure.inc.php',APP_PATH.DS.DATABASE.DS)) {
 }
 
 load('defined.php',APP_PATH.DS.DATABASE.DS);
-load('Autoloads.php',ROOT_PATH); //自動加載文件，不加載靜態類文件     
-load('App.class.php',ROOT_PATH); //路由与加载机制 
+load('Autoloads.php',ROOT_PATH.DS.ROUTE.DS); //自動加載文件，不加載靜態類文件
+load('Xbphp.php',ROOT_PATH.DS.ROUTE.DS); //路由核心类     
+load('App.php',ROOT_PATH.DS.ROUTE.DS); //路由与加载机制 
 
 //执行程序入口
 Xbphp::run_cache('App');
