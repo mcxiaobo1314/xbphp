@@ -76,7 +76,7 @@ class Xbphp  {
 		if(!in_array($obj,self::$init) && class_exists($obj)){
 			self::$init[$obj] = new $obj();
 		}
-		return self::$init[$obj];
+		return isset(self::$init[$obj]) ? self::$init[$obj] : '';
 	}
 	/**
 	 * 获取框架加载完成的消耗的内存
