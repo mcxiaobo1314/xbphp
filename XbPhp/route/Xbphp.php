@@ -61,7 +61,7 @@ class Xbphp  {
 	 * @author wave
 	 */
 	public static function run_cache($obj) {
-		if(!in_array($obj,self::$init)){
+		if(!in_array($obj,self::$init) && class_exists($obj)){
 			self::$init[$obj] = new $obj();
 		}
 		return self::$init[$obj];
