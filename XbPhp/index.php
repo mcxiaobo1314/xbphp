@@ -17,7 +17,7 @@ $root_path = 'home';
  */	
 define('ROOT',str_replace('\\','/', dirname(dirname(__FILE__))));//跟目录
 define('ROOT_PATH',basename(dirname(__FILE__)));            //框架名
-define('DS','/');   										//定义斜杠
+define('DS',DIRECTORY_SEPARATOR);   						//定义斜杠
 define('DATABASE','databases');                           	//数据库连接文件路径
 define('ROOT_CONF','conf');                           		//系統公用配置文件路徑
 define('ROOT_MODEL','model');                             	//模型文件的路径
@@ -36,43 +36,9 @@ define('LOGS','logs');                              		//定义錯誤日記文件
 
 //引入方法文件
 include ROOT.DS.ROOT_PATH.DS.ROOT_COM.DS.'functions.php'; 
+load('Xbphp.php',ROOT_PATH.DS.ROUTE.DS); //路由核心类 
 
-if(isset($_SERVER['REDIRECT_URL'])) {
-	//这个是linux或windows自动获取目录
-	$pathinfo = $_SERVER['REDIRECT_URL']; 
-	$arr = array_values(array_filter(explode('/',ltrim(strip_tags($pathinfo),'/'))));
-	if(isset($arr['0']) && strtolower($arr['0']) == strtolower(ROOT_PATH)) {
-		array_splice($arr,0,1);
-	}
-	if(isset($arr['0']) && file_exists(ROOT.DS.$arr['0'].DS)) {
-		define('APP_PATH',$arr['0']);  //获取URL访问
-	}
-
-}else { //单独LINUX动态记录目录
-	$_SERVER['PHP_SELF'] = str_replace(array('/','index.php'), '', $_SERVER['PHP_SELF']);
-	if(!empty($_SERVER['PHP_SELF'])) {
-		$arr = array_values(array_filter(explode('/', $_SERVER['PHP_SELF'])));
-		if(count($arr) >= 1) {
-			if(strtolower($arr['0']) == strtolower(basename(ROOT))) {
-				array_splice($arr, 0,1);
-			}
-			if(isset($arr['0']) && file_exists(ROOT.DS.$arr['0'].DS)) {
-				define('APP_PATH', $arr['0']);
-			}
-		}
-	}else { //windows nginx 偽靜態
-		$arr =  array_values(array_filter(explode('/',ltrim(strip_tags($_SERVER['REQUEST_URI']),'/'))));
-		if(isset($arr['0']) && strtolower($arr['0']) == strtolower(basename(ROOT))) {
-			array_splice($arr,0,1);
-		}
-
-		if(!empty($arr)) {
-			if(isset($arr['0']) && file_exists(ROOT.DS.$arr['0'].DS)) {
-				define('APP_PATH', $arr['0']);
-			}
-		}
-	}
-}
+Xbphp::getUrlPath();
 
 if(!defined('APP_PATH') || APP_PATH == NULL) {
 	define('APP_PATH',$root_path);
@@ -90,8 +56,7 @@ if(!load('configure.inc.php',APP_PATH.DS.DATABASE.DS)) {
 }
 
 load('defined.php',APP_PATH.DS.DATABASE.DS);
-load('Autoloads.php',ROOT_PATH.DS.ROUTE.DS); //自動加載文件，不加載靜態類文件
-load('Xbphp.php',ROOT_PATH.DS.ROUTE.DS); //路由核心类     
+load('Autoloads.php',ROOT_PATH.DS.ROUTE.DS); //自動加載文件，不加載靜態類文件    
 load('App.php',ROOT_PATH.DS.ROUTE.DS); //路由与加载机制 
 
 //执行程序入口

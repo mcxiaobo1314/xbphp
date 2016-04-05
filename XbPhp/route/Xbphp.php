@@ -78,6 +78,41 @@ class Xbphp  {
 		}
 		return isset(self::$init[$obj]) ? self::$init[$obj] : '';
 	}
+
+	/**
+	 * 获取URL目录
+	 * @author wave
+	 */
+	public static function getUrlPath() {
+		if(isset($_SERVER['REDIRECT_URL'])) {
+			//这个是linux或windows自动获取目录
+			$pathinfo = $_SERVER['REDIRECT_URL']; 
+			$arr = array_values(array_filter(explode('/',ltrim(strip_tags($pathinfo),'/'))));
+			if(isset($arr['0']) && strtolower($arr['0']) == strtolower(ROOT_PATH)) {
+				array_splice($arr,0,1);
+			}
+		}else { //单独LINUX动态记录目录
+			$_SERVER['PHP_SELF'] = str_replace(array('/','index.php'), '', $_SERVER['PHP_SELF']);
+			if(!empty($_SERVER['PHP_SELF'])) {
+				$arr = array_values(array_filter(explode('/', $_SERVER['PHP_SELF'])));
+				if(count($arr) >= 1) {
+					if(strtolower($arr['0']) == strtolower(basename(ROOT))) {
+						array_splice($arr, 0,1);
+					}
+				}
+			}else { //windows nginx 偽靜態
+				$arr =  array_values(array_filter(explode('/',ltrim(strip_tags($_SERVER['REQUEST_URI']),'/'))));
+				if(isset($arr['0']) && strtolower($arr['0']) == strtolower(basename(ROOT))) {
+					array_splice($arr,0,1);
+				}
+			}
+		}
+
+		if(isset($arr['0']) && file_exists(ROOT.DS.$arr['0'].DS)) {
+			define('APP_PATH',$arr['0']);
+		}
+	}
+
 	/**
 	 * 获取框架加载完成的消耗的内存
 	 * @return int
@@ -86,6 +121,7 @@ class Xbphp  {
 	public static function endMemory() {
 		return memory_get_usage(true);
 	}
+
 	/**
 	 * 获取框架消耗的内存
 	 * @return string
