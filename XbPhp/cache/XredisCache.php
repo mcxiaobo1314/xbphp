@@ -3,7 +3,7 @@
  * redis缓存
  * @author wave
  */
-class Xredis {
+class XredisCache {
 	/**
 	 * 初始化redis函数
 	 * @param string  $host 主机IP

@@ -10,20 +10,33 @@
  * @author wave
  */
 function auoload($class_name) {
-	static  $configs = array();
-	if(empty($configs) && !isset($configs['include'])) {
-		$configs['include'] = array(
-			ROOT.DS.ROOT_PATH.DS.ROOT_CONTROLLER.DS,
-			ROOT.DS.ROOT_PATH.DS.ROOT_MODEL.DS,
-			ROOT.DS.ROOT_PATH.DS.ROOT_VIEW.DS,
-			ROOT.DS.ROOT_PATH.DS.ROOT_COM.DS,
-			ROOT.DS.ROOT_PATH.DS.CACHE.DS,
-		);
+	strposAutoload($class_name,'Controller',ROOT.DS.ROOT_PATH.DS.ROOT_CONTROLLER.DS);
+	strposAutoload($class_name,'Model',ROOT.DS.ROOT_PATH.DS.ROOT_MODEL.DS);
+	strposAutoload($class_name,'view',ROOT.DS.ROOT_PATH.DS.ROOT_VIEW.DS);
+	strposAutoload($class_name,'Cache',ROOT.DS.ROOT_PATH.DS.CACHE.DS);
+	// static  $configs = array();
+	// if(empty($configs) && !isset($configs['include'])) {
+	// 	$configs['include'] = array(
+	// 		ROOT.DS.ROOT_PATH.DS.ROOT_CONTROLLER.DS,
+	// 		ROOT.DS.ROOT_PATH.DS.ROOT_MODEL.DS,
+	// 		ROOT.DS.ROOT_PATH.DS.ROOT_VIEW.DS,
+	// 		ROOT.DS.ROOT_PATH.DS.ROOT_COM.DS,
+	// 		ROOT.DS.ROOT_PATH.DS.CACHE.DS,
+	// 	);
+	// }
+	// set_include_path(get_include_path() . PATH_SEPARATOR .implode( PATH_SEPARATOR , $configs['include']));
+	// require_once $class_name.'.php';
+
+
+}
+
+function strposAutoload($class_name,$strpos_class_name,$path) {
+	if(strpos($class_name, $strpos_class_name) !== false) {
+		if(file_exists($path.$class_name.'.php')) {
+			require_once $path.$class_name.'.php';
+		}
+		
 	}
-	set_include_path(get_include_path() . PATH_SEPARATOR .implode( PATH_SEPARATOR , $configs['include']));
-	require_once $class_name.'.php';
-
-
 }
 
 
