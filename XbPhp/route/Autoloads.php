@@ -21,13 +21,14 @@ class XbphpAutoload {
 		self::strposAutoload($class_name,'view',ROOT.DS.ROOT_PATH.DS.ROOT_VIEW.DS);
 		self::strposAutoload($class_name,'Cache',ROOT.DS.ROOT_PATH.DS.CACHE.DS);
 	}
+	
 	/**
 	 * 截取文件名并判断加载文件是否存在
 	 * @param string $class_name 文件名
 	 * @param string $strpos_class_name 截取的文件名
 	 * @param string $path 加载的路径
 	 * @param string $extension 扩展名
-	 * @author
+	 * @author wave
 	 */
 	public static function strposAutoload($class_name,$strpos_class_name,$path,$extension = '.php') {
 		if(strpos($class_name, $strpos_class_name) !== false) {
