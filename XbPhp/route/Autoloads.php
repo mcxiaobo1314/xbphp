@@ -3,54 +3,53 @@
  * 自動加載核心文件
  * @author wave
  */
+class XbphpAutoload {
 
-/**
- * 自动加载核心文件(非静态类)
- * @param string $class_name  文件名
- * @author wave
- */
-function auoload($class_name) {
-	strposAutoload($class_name,'Controller',ROOT.DS.ROOT_PATH.DS.ROOT_CONTROLLER.DS);
-	strposAutoload($class_name,'Model',ROOT.DS.ROOT_PATH.DS.ROOT_MODEL.DS);
-	strposAutoload($class_name,'view',ROOT.DS.ROOT_PATH.DS.ROOT_VIEW.DS);
-	strposAutoload($class_name,'Cache',ROOT.DS.ROOT_PATH.DS.CACHE.DS);
-	// static  $configs = array();
-	// if(empty($configs) && !isset($configs['include'])) {
-	// 	$configs['include'] = array(
-	// 		ROOT.DS.ROOT_PATH.DS.ROOT_CONTROLLER.DS,
-	// 		ROOT.DS.ROOT_PATH.DS.ROOT_MODEL.DS,
-	// 		ROOT.DS.ROOT_PATH.DS.ROOT_VIEW.DS,
-	// 		ROOT.DS.ROOT_PATH.DS.ROOT_COM.DS,
-	// 		ROOT.DS.ROOT_PATH.DS.CACHE.DS,
-	// 	);
-	// }
-	// set_include_path(get_include_path() . PATH_SEPARATOR .implode( PATH_SEPARATOR , $configs['include']));
-	// require_once $class_name.'.php';
+	public static function init() {
+		spl_autoload_register('self::autoload');
+		self::AutoloadsStatic();
+	}
 
-
-}
-
-function strposAutoload($class_name,$strpos_class_name,$path) {
-	if(strpos($class_name, $strpos_class_name) !== false) {
-		if(file_exists($path.$class_name.'.php')) {
-			require_once $path.$class_name.'.php';
+	/**
+	 * 自动加载核心文件(非静态类)
+	 * @param string $class_name  文件名
+	 * @author wave
+	 */
+	public static function autoload($class_name) {
+		self::strposAutoload($class_name,'Controller',ROOT.DS.ROOT_PATH.DS.ROOT_CONTROLLER.DS);
+		self::strposAutoload($class_name,'Model',ROOT.DS.ROOT_PATH.DS.ROOT_MODEL.DS);
+		self::strposAutoload($class_name,'view',ROOT.DS.ROOT_PATH.DS.ROOT_VIEW.DS);
+		self::strposAutoload($class_name,'Cache',ROOT.DS.ROOT_PATH.DS.CACHE.DS);
+	}
+	/**
+	 * 截取文件名并判断加载文件是否存在
+	 * @param string $class_name 文件名
+	 * @param string $strpos_class_name 截取的文件名
+	 * @param string $path 加载的路径
+	 * @param string $extension 扩展名
+	 * @author
+	 */
+	public static function strposAutoload($class_name,$strpos_class_name,$path,$extension = '.php') {
+		if(strpos($class_name, $strpos_class_name) !== false) {
+			if(file_exists($path.$class_name.'.php')) {
+				require_once $path.$class_name.$extension;
+			}
+			
 		}
-		
+	}
+
+
+	/**
+	 * 加载静态文件
+	 * @author wave
+	 */
+	public static function AutoloadsStatic() {
+		load('config.php',APP_PATH.DS.DATABASE) ; //数据库配置文件
+		load('Error.php',ROOT_PATH.DS.ROOT_ERROR.DS);					//錯誤
+		load('AppModel.php',APP_PATH.DS.ROOT_MODEL.DS);					//模型
+		load('AppController.php',APP_PATH.DS.ROOT_CONTROLLER.DS);		//控制器
+		load('Socket.php',ROOT_PATH.DS.VENDOR.DS); //socket加载
 	}
 }
 
-
-/**
- * 加载静态文件
- * @author wave
- */
-function AutoloadsStatic() {
-	load('config.php',APP_PATH.DS.DATABASE) ; //数据库配置文件
-	load('Error.php',ROOT_PATH.DS.ROOT_ERROR.DS);					//錯誤
-	load('AppModel.php',APP_PATH.DS.ROOT_MODEL.DS);					//模型
-	load('AppController.php',APP_PATH.DS.ROOT_CONTROLLER.DS);		//控制器
-	load('Socket.php',ROOT_PATH.DS.VENDOR.DS); //socket加载
-}
-spl_autoload_register('auoload');
-AutoloadsStatic();
-
+XbphpAutoload::init();
