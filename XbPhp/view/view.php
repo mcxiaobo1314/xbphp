@@ -266,7 +266,7 @@ class view
 					}
 				}
 				if(empty($blooen)) { //没有模版变量
-					$path_str = $this->_compresFile(str_replace(array('"',"'"),'',rtrim($_str,'.'))); 
+					$path_str = str_replace('\\','/',$this->_compresFile(str_replace(array('"',"'"),'',rtrim($_str,'.')))); 
 					$_str = '<?php include "'.$path_str.'"; ?>';
 					$html = str_replace($val['0'],$_str,$html);	
 				}else { //引入的模版变量
