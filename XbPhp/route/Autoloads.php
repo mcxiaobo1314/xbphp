@@ -50,6 +50,7 @@ class XbphpAutoload {
 		load('AppModel.php',APP_PATH.DS.ROOT_MODEL.DS);					//模型
 		load('AppController.php',APP_PATH.DS.ROOT_CONTROLLER.DS);		//控制器
 		load('Socket.php',ROOT_PATH.DS.VENDOR.DS); //socket加载			
+		load('db.class.php',ROOT_PATH);  //加载连接数据库类
 	}
 }
 
