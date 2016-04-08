@@ -49,7 +49,7 @@ class XbphpAutoload {
 		load('Error.php',ROOT_PATH.DS.ROOT_ERROR.DS);					//錯誤
 		load('AppModel.php',APP_PATH.DS.ROOT_MODEL.DS);					//模型
 		load('AppController.php',APP_PATH.DS.ROOT_CONTROLLER.DS);		//控制器
-		load('Socket.php',ROOT_PATH.DS.VENDOR.DS); //socket加载
+		load('Socket.php',ROOT_PATH.DS.VENDOR.DS); //socket加载			
 	}
 }
 

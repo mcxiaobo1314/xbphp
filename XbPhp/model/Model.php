@@ -48,7 +48,8 @@
 		$this->alias = $alias;
 		$this->connect = $connect;
 		if(empty(self::$db)) { //防止多次加載
-			 self::$db  =  !empty($this->connect) ? self::link($this->connect) : self::link(config::$default);   //进行初始化数据
+			 //进行初始化数据
+			self::$db  =  !empty($this->connect) ? self::link($this->connect) : (isset(config::$default) ? self::link(config::$default) : 1);  
 		}
 	}
 
