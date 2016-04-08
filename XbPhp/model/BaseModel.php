@@ -16,7 +16,12 @@ class BaseModel {
 	protected $flag = true;
 
 	//获取数据
-	protected $data;
+	public $data;
+
+	public function __construct(){
+		//对POST数据进行把特殊字符转换实体
+		$this->ParameterFilter($_POST,"htmlspecialchars");
+	}
 
 
 	protected function getData() {
@@ -99,6 +104,26 @@ class BaseModel {
 		}
 		return $flag;
 	}
+
+	/**
+	 * 对参数过滤把特殊字符转换实体
+	 * @param Array $send 要过滤的数据
+	 * @param string function $callback 要过滤的函数
+	 * @author wave
+	 */
+	public function ParameterFilter(&$send,$callback) {
+		if(!is_array($send) || empty($send)) {
+			return ;
+		}
+		if(!function_exists($callback)) {
+			return ;
+		}
+		$sendKey = array_keys($send);
+		$sendString = $callback(implode(",",$send));
+		$sendArr = explode(",", $sendString);
+		$send = array_combine($sendKey,$sendArr);
+	}
+
 
 
 }

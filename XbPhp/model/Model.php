@@ -4,7 +4,6 @@
  * 此代码还能继续优化,谁知道多维数任串意组装成字符高效率办法，可以加群：114252528
  * @author wave
  */
-
  class Model extends BaseModel {
 
  	//绑定数组
@@ -49,12 +48,7 @@
 		$this->alias = $alias;
 		$this->connect = $connect;
 		if(empty(self::$db)) { //防止多次加載
-			load('db.class.php',ROOT_PATH);  //加载连接数据库类
-			if(!empty($this->connect)) {
-			 	self::$db  =  !empty($this->connect) ? self::link($this->connect) : 1;   //进行初始化数据
-			 }else {
-			 	self::$db  = isset(config::$default) ? self::link(config::$default) : 1;   
-			 }
+			 self::$db  =  !empty($this->connect) ? self::link($this->connect) : self::link(config::$default);   //进行初始化数据
 		}
 	}
 
