@@ -19,6 +19,8 @@ class Controller {
 		$this->AtuoLoads();
 		//视图
 		$this->views();
+		//过滤post数据
+		$this->ParameterFilter($_POST,"htmlspecialchars");
 		//获取请求
 		$this->request();
 		//自动初始化回调函数
@@ -223,7 +225,26 @@ class Controller {
 				$this->Components($value);
 			}
 		}
-	}	
+	}
+
+	/**
+	 * 对参数过滤把特殊字符转换实体
+	 * @param Array $send 要过滤的数据
+	 * @param string $callback 回調函數
+	 * @author wave
+	 */
+	public function ParameterFilter(&$send,$callback) {
+		if(!is_array($send) || empty($send) || !function_exists($callback)) {
+			return ;
+		}
+		foreach ($send as $key => $value) {
+			if(is_array($value)) {
+				$this->ParameterFilter($send[$key],$callback);
+			}else {
+				$send[$key] = $callback($value);
+			}
+		}
+	}
 
 	protected function _initialize() {}
 }
