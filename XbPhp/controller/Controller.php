@@ -20,7 +20,7 @@ class Controller {
 		//视图
 		$this->views();
 		//过滤post数据
-		$this->ParameterFilter($_POST,"htmlspecialchars");
+		$this->ParameterFilter($_POST);
 		//获取请求
 		$this->request();
 		//自动初始化回调函数
@@ -233,17 +233,16 @@ class Controller {
 	 * @param string $callback 回調函數
 	 * @author wave
 	 */
-	public function ParameterFilter(&$send,$callback) {
-		if(!is_array($send) || empty($send) || !function_exists($callback)) {
+	public function ParameterFilter(&$send) {
+		if(!is_array($send) || empty($send)) {
 			return ;
 		}
-		foreach ($send as $key => $value) {
-			if(is_array($value)) {
-				$this->ParameterFilter($send[$key],$callback);
-			}else {
-				$send[$key] = $callback($value);
-			}
-		}
+		$htmlTranslationTableArr = get_html_translation_table(HTML_SPECIALCHARS,ENT_NOQUOTES,"UTF-8");
+		$htmlTranslationTableArrVal =array_values($htmlTranslationTableArr);
+		$htmlTranslationTableArrKey = array_keys($htmlTranslationTableArr);
+		$send = json_encode($send);
+		$send = str_replace($htmlTranslationTableArrKey, $htmlTranslationTableArrVal,$send);
+		$send = json_decode($send,true);
 	}
 
 	protected function _initialize() {}
