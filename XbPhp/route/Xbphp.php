@@ -21,18 +21,15 @@ class Xbphp  {
 		}elseif(!empty($_SERVER['REQUEST_URI'])) {
 			$url = $_SERVER['REQUEST_URI'];
 		}
-
+		$url = self::strposPath($url,strtolower(ROOT_PATH));
 		$params = !empty($url) ? explode('/',ltrim(strip_tags($url),'/')) : '';
-
 		if(count($params) == 1) {
 			$url_arr = parse_url($url);
 			$params[0] = isset($url_arr['path']) ?  ltrim($url_arr['path'],'/') : '';
 			$params[1] = isset($url_arr['query']) ?  $url_arr['query'] : '';
 		}
+		self::seachUnset(strtolower(basename(ROOT)),$params);
 
-		if( isset($params[0]) && strtolower($params[0]) == strtolower(basename(ROOT))) {
-			array_splice($params, 0,1);
-		}
 		if(!empty($params) && isset($params[count($params) - 1]) ) {
 			$arr =array_filter(explode('/',$params[count($params) - 1]));
 			if(count($arr) >=1  && strpos($params[count($params) - 1],'.') !== false) {
@@ -43,15 +40,13 @@ class Xbphp  {
 				$params = self::strposReplace($params,'?');
 			}
 		}
-		 //删除目录文件
-		if(isset($params['0']) && strtolower($params['0']) == strtolower(APP_PATH)) {
-				array_splice($params, 0,1);
-				
-		}
 
+		 //删除目录文件
+		self::seachUnset(strtolower(APP_PATH),$params);
 		$params = array_values(array_filter($params));
 		return (is_array($params) && count($params) > 1)  ? $params : '';
 	}
+
 
 	/**
 	 * 截取数组最后一个元素,并替换成空
@@ -87,6 +82,7 @@ class Xbphp  {
 		if(isset($_SERVER['REDIRECT_URL'])) {
 			//这个是linux或windows自动获取目录
 			$pathinfo = $_SERVER['REDIRECT_URL']; 
+			$pathinfo = self::strposPath($pathinfo,strtolower(ROOT_PATH));
 			$arr = array_values(array_filter(explode('/',strip_tags($pathinfo))));
 			if(isset($arr['0']) && strtolower($arr['0']) == strtolower(ROOT_PATH)) {
 				array_splice($arr,0,1);
@@ -186,5 +182,32 @@ class Xbphp  {
 				break;
 		}
 		return $url;
+	}
+
+	/**
+	 * 截取路径
+	 * @param string $Path 路径
+	 * @param string $stopsPath 要截取路径
+	 * @return string
+	 * @author wave
+	 */
+	private static function strposPath($path,$stopsPath) {
+		$key  = strpos($path,$stopsPath);
+		return ($key !==false) ? substr($path, $key+strlen($stopsPath)) : $path;
+	}
+
+
+	/**
+	 * 查找目录文件名是否存在
+	 * @param string $string  要查找的元素
+	 * @param Array $arr 要查找的数组
+	 * @param len $len 要移除的长度
+	 * @author wave
+	 */
+	private static function seachUnset($string,&$arr,$len =1) {
+		$key = array_search($string,$arr,true);
+		if( isset($arr[$key]) && strtolower($arr[$key]) == $string) {
+			array_splice($arr, $key,$len);
+		}
 	}
 }
