@@ -87,12 +87,15 @@ class Xbphp  {
 		if(isset($_SERVER['REDIRECT_URL'])) {
 			//这个是linux或windows自动获取目录
 			$pathinfo = $_SERVER['REDIRECT_URL']; 
-			$arr = array_values(array_filter(explode('/',ltrim(strip_tags($pathinfo),'/'))));
+			$arr = array_values(array_filter(explode('/',strip_tags($pathinfo))));
 			if(isset($arr['0']) && strtolower($arr['0']) == strtolower(ROOT_PATH)) {
 				array_splice($arr,0,1);
 			}
+			if(strtolower($arr['0']) == strtolower(basename(ROOT))) {
+				array_splice($arr, 0,1);
+			}
 		}else { //单独LINUX动态记录目录
-			$_SERVER['PHP_SELF'] = str_replace(array('/','index.php'), '', $_SERVER['PHP_SELF']);
+			$_SERVER['PHP_SELF'] = str_replace(array('/index.php'), '', $_SERVER['PHP_SELF']);
 			if(!empty($_SERVER['PHP_SELF'])) {
 				$arr = array_values(array_filter(explode('/', $_SERVER['PHP_SELF'])));
 				if(count($arr) >= 1) {

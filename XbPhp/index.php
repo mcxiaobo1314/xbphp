@@ -17,7 +17,7 @@ $root_path = 'home';
  */	
 define('ROOT',str_replace('\\','/', dirname(dirname(__FILE__))));//跟目录
 define('ROOT_PATH',basename(dirname(__FILE__)));            //框架名
-define('DS',DIRECTORY_SEPARATOR);   						//定义斜杠
+define('DS',str_replace('\\','/', DIRECTORY_SEPARATOR));   						//定义斜杠
 define('DATABASE','databases');                           	//数据库连接文件路径
 define('ROOT_CONF','conf');                           		//系統公用配置文件路徑
 define('ROOT_MODEL','model');                             	//模型文件的路径
