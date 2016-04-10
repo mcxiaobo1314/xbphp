@@ -84,26 +84,18 @@ class Xbphp  {
 			$pathinfo = $_SERVER['REDIRECT_URL']; 
 			$pathinfo = self::strposPath($pathinfo,strtolower(ROOT_PATH));
 			$arr = array_values(array_filter(explode('/',strip_tags($pathinfo))));
-			if(isset($arr['0']) && strtolower($arr['0']) == strtolower(ROOT_PATH)) {
-				array_splice($arr,0,1);
-			}
-			if(strtolower($arr['0']) == strtolower(basename(ROOT))) {
-				array_splice($arr, 0,1);
-			}
+			self::seachUnset(strtolower(ROOT_PATH),$arr);
+			self::seachUnset(strtolower(basename(ROOT)),$arr);
 		}else { //单独LINUX动态记录目录
 			$_SERVER['PHP_SELF'] = str_replace(array('/index.php'), '', $_SERVER['PHP_SELF']);
 			if(!empty($_SERVER['PHP_SELF'])) {
 				$arr = array_values(array_filter(explode('/', $_SERVER['PHP_SELF'])));
 				if(count($arr) >= 1) {
-					if(strtolower($arr['0']) == strtolower(basename(ROOT))) {
-						array_splice($arr, 0,1);
-					}
+					self::seachUnset(strtolower(basename(ROOT)),$arr);
 				}
 			}else { //windows nginx 偽靜態
 				$arr =  array_values(array_filter(explode('/',ltrim(strip_tags($_SERVER['REQUEST_URI']),'/'))));
-				if(isset($arr['0']) && strtolower($arr['0']) == strtolower(basename(ROOT))) {
-					array_splice($arr,0,1);
-				}
+				self::seachUnset(strtolower(basename(ROOT)),$arr);
 			}
 		}
 
