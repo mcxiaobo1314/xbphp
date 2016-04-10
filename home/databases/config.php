@@ -4,6 +4,7 @@
  * @author wave
  */			
 class config {
+	public static $disableController = array('App'); //禁用控制器的名字
 	public static $redisStatus = 0; //1为开启初始化redis,0则不初始化redis
 
 	//mysql配置
