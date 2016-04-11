@@ -48,12 +48,13 @@ function dump($val = null) {
 function load($name = null , $path = null) {
 	static $name_arr = array();
 	$file = ROOT.DS.$path;
-
-	if(!empty($name) && !in_array($name,$name_arr)) {
-		$name_arr[$path.$name] = $name;
+	$name_path = realpath($file.DS.$name);
+	if(!empty($name) && !in_array($name_path,$name_arr)) {
+		$name_arr[$name_path] = $name_path;
 	}
-	if(file_exists(realpath($file.DS.$name_arr[$path.$name]))) {
-		return require realpath($file.DS.$name_arr[$path.$name]);
+
+	if(file_exists($name_arr[$name_path])) {
+		return require $name_arr[$name_path];
 	}
 	return false;
 }

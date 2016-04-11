@@ -33,9 +33,8 @@ class XbphpAutoload {
 	public static function strposAutoload($class_name,$strpos_class_name,$path,$extension = '.php') {
 		if(strpos($class_name, $strpos_class_name) !== false) {
 			if(file_exists($path.$class_name.'.php')) {
-				require_once $path.$class_name.$extension;
+				require $path.$class_name.$extension;
 			}
-			
 		}
 	}
 
@@ -45,12 +44,12 @@ class XbphpAutoload {
 	 * @author wave
 	 */
 	public static function AutoloadsStatic() {
-		load('config.php',APP_PATH.DS.DATABASE) ; //数据库配置文件
 		load('Error.php',ROOT_PATH.DS.ROOT_ERROR.DS);					//錯誤
 		load('AppModel.php',APP_PATH.DS.ROOT_MODEL.DS);					//模型
 		load('AppController.php',APP_PATH.DS.ROOT_CONTROLLER.DS);		//控制器
-		load('Socket.php',ROOT_PATH.DS.VENDOR.DS); //socket加载			
-		load('db.class.php',ROOT_PATH);  //加载连接数据库类
+		load('Socket.php',ROOT_PATH.DS.VENDOR.DS); //socket加载	
+		load('db.class.php',ROOT_PATH);  		
+
 	}
 }
 

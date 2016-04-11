@@ -15,11 +15,10 @@ class App
 		$params = self::getUrl();  //獲取URL參數數組
 		$request = array(); //URL的参数
 		$num = 0; //动态URL访问
-		config::$disableController = isset(config::$disableController) ? config::$disableController : array();
 		//动态的URL的路由器
 		if(!isset($params['rewirte'])) {
 			$params[M] = isset($params[M]) ? $params[M] : M_INDEX;
-			$params[M] = in_array($params[M], config::$disableController) ? M_INDEX : $params[M];
+			$params[M] =  isset(config::$disableController) ? (in_array($params[M], config::$disableController) ? M_INDEX : $params[M]) : M_INDEX;
 			$params[A] = isset($params[A]) ? $params[A] : A_INDEX;
 			$controller = $params[M].'Controller.php';
 			$action = $params[A];
@@ -28,7 +27,7 @@ class App
 			if(!empty($params)) {
 				unset($params['rewirte']);
 				$params['0'] = isset($params['0']) ? $params['0'] : M_INDEX;
-				$params['0'] = in_array($params['0'], config::$disableController) ? M_INDEX : $params['0'];
+				$params['0'] = isset(config::$disableController) ? (in_array($params['0'], config::$disableController) ? M_INDEX : $params['0']) : M_INDEX;
 				$params['1'] = isset($params['1']) ? $params['1'] : A_INDEX;
 				if(strpos($params['1'],'?') !== false) {
 					$str = substr($params['1'],strpos($params['1'],'?'));

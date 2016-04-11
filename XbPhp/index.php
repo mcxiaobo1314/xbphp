@@ -55,7 +55,16 @@ if(!load('configure.inc.php',APP_PATH.DS.DATABASE.DS)) {
 	load('configure.inc.php',ROOT_PATH.DS.ROOT_CONF.DS);
 }
 
-load('defined.php',APP_PATH.DS.DATABASE.DS);
+//数据库配置文件
+if(!load('config.php',APP_PATH.DS.DATABASE.DS)) {
+	load('config.php',ROOT_PATH.DS.ROOT_CONF.DS);
+}
+
+//全局变量
+if(!load('defined.php',APP_PATH.DS.DATABASE.DS)) {
+	load('defined.php',ROOT_PATH.DS.ROOT_CONF.DS);
+}
+
 load('Autoloads.php',ROOT_PATH.DS.ROUTE.DS); //自動加載文件，不加載靜態類文件    
 load('App.php',ROOT_PATH.DS.ROUTE.DS); //路由与加载机制 
 
