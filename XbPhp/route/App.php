@@ -48,7 +48,8 @@ class App
 
 			if(isset($xb) && method_exists($xb,$action)) {
 				$paramArr = self::replaceArr(array($controller_name,$action),'',$params);
-				$_GET = $request = isset($params['params']) ? $params['params'] : $paramArr;
+				 $request = isset($params['params']) ? $params['params'] : $paramArr;
+				 $_GET = !empty($_GET) ? array_merge($_GET,$request) : $_GET;
 
 				$route = load('route.php',APP_PATH.DS.DATABASE.DS); //加载路由规则
 				if(!empty($num) && isset($route['rewirte'][rtrim($controller,'Controller.php')][$action])) {
@@ -57,7 +58,7 @@ class App
 					$requestStr = isset($request[0]) ? $request[0] : '';
 					$requestArr = explode('/', $requestStr);
 					$keyArr = is_array($requestArr) ? array_diff($requestArr,$arr) : array();
-					$_GET = !empty($keyArr) ?  array_combine($keyArr, $arr) : $arr;	
+					$_GET = !empty($keyArr) ?  array_merge($_GET,array_combine($keyArr, $arr)) : array_merge($_GET,$arr);
 				}
 
 				//动态url规则
