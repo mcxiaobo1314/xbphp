@@ -56,7 +56,7 @@ class Xbphp  {
 	 * @author wave
 	 */
 	public static function strposReplace($params,$str) {
-		$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],'.'));
+		$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],$str));
 		$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
 		return $params;
 	}
