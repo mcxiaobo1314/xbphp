@@ -48,12 +48,16 @@ class App
 
 			if(isset($xb) && method_exists($xb,$action)) {
 				$paramArr = self::replaceArr(array($controller_name,$action),'',$params);
-				$request = isset($params['params']) ? $params['params'] : $paramArr;
-				$route = load('route.php',APP_PATH.DS.DATABASE.DS); //加载路由规则
+				$_GET = $request = isset($params['params']) ? $params['params'] : $paramArr;
 
+				$route = load('route.php',APP_PATH.DS.DATABASE.DS); //加载路由规则
 				if(!empty($num) && isset($route['rewirte'][rtrim($controller,'Controller.php')][$action])) {
 					$request = implode('/',$request);
-					$this->route('rewirte',$request,$route,$controller,$action);
+					$arr = $this->route('rewirte',$request,$route,$controller,$action);
+					$requestStr = isset($request[0]) ? $request[0] : '';
+					$requestArr = explode('/', $requestStr);
+					$keyArr = is_array($requestArr) ? array_diff($requestArr,$arr) : array();
+					$_GET = !empty($keyArr) ?  array_combine($keyArr, $arr) : $arr;	
 				}
 
 				//动态url规则
@@ -89,14 +93,15 @@ class App
 		}
 		
 		$request = ($op === 'rewirte') ?  $request : http_build_query($request);
-		
 		if(!isset($route[$op][rtrim($controller,'Controller.php')][$action])) {
 			load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl');
 		 	exit;
 		}
 
 		if(preg_match($route[$op][rtrim($controller,'Controller.php')][$action],$request,$arr)) {
+			$valueArr = isset($arr[0]) ? explode('/', $arr[0]) : array();
 			$request = array_values(array_filter(array_splice($arr,0,1)));
+			return $arr;
 		}else {
 		 	load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl');
 		 	exit;
