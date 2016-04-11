@@ -56,6 +56,7 @@ function load($name = null , $path = null) {
 	if(file_exists($name_arr[$name_path])) {
 		return require $name_arr[$name_path];
 	}
+	unset($name_arr[$name_path]);
 	return false;
 }
 
