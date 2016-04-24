@@ -16,13 +16,33 @@ h1{ font-size: 28px; line-height: 48px; }
 .info .text{ line-height: 24px; }
 .copyright{ padding: 12px 48px; color: #999; text-align: right; font-size: 16px; }
 .copyright a{ color: #000; text-decoration: none; font-size: 16px; }
+
+<?php  echo $cssData;?>
 </style>
+<script>
+<?php  echo $jsData;?>
+SyntaxHighlighter.all();
+SyntaxHighlighter.defaults['toolbar'] = false;
+SyntaxHighlighter.defaults['smart-tabs'] = false;
+SyntaxHighlighter.defaults['first-line'] = <?php echo $line; ?>;
+SyntaxHighlighter.defaults['tab-size'] = 0;
+</script>
 </head>
 <body>
 <div class="small">
 	<h2>╯﹏╰<h2>
 	<h1><?php echo $arr['message'];?></h1>
-	<div class="content">
+	<div class="content">				
+		<div class="info">
+			<div class="title">
+				<h3>错误代码</h3>
+			</div>
+			<div class="text">
+				<pre class="brush: php;" >
+				<?php echo $code; ?>  
+				</pre>
+			</div>
+		</div>
 		<div class="info">
 			<div class="title">
 				<h3>错误位置</h3>

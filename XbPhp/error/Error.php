@@ -6,6 +6,7 @@
 
 
 class Error {
+
 	/**
 	 * 输出错误信息
 	 * @author wave
@@ -14,6 +15,13 @@ class Error {
 		$arr = error_get_last();
 		if($arr != null) {
 			self::logs($arr);
+			$prevLine = 10;
+			$code = self::getCode($arr,$prevLine);
+			$line = $arr['line'] - $prevLine+1;
+			$jsData = read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'js'.DS.'shCore.js');
+			$jsData .= read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'js'.DS.'shBrushPhp.js');
+			$cssData = read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'css'.DS.'shCore.css');
+			$cssData .= read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'css'.DS.'shThemeDefault.css');
 			switch (ERROR) {
 				case '1':
 					require ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'error.tpl';
@@ -25,6 +33,30 @@ class Error {
 		}
 	}
 
+ 	/**
+ 	 * 获取错误代码
+ 	 * @param Array $arr 错误信息
+ 	 * @param int $prevLine 获取前几行
+ 	 * @param int $nextLine 获取后几行
+ 	 * @author wave
+ 	 */
+	private static function getCode($arr,$prevLine = 3, $nextLine = 10) {
+		$str = '';
+		if(is_array($arr) &&  isset($arr['line']) && isset($arr['file'])) {
+			$errData = read($arr['file']);
+			$errDataArr = explode("\r\n", $errData);
+			for($i = $arr['line'] - $prevLine; $i<=$arr['line']+$nextLine; $i++) {
+				if($arr['line'] - $i == 1) {
+					$str .= trim($errDataArr[$i])."\r";
+				}else {
+					$str .= trim($errDataArr[$i])."\r";
+				}
+			}
+		}
+		return $str;
+	}
+
+
 	/**
 	 * 404错误页面
 	 * @author wave
@@ -33,6 +65,29 @@ class Error {
 		load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl');
 		exit;
 	}
+
+	/**
+	 * 选择错误信息
+	 * @author wave
+	 */
+	public  static function spl_error() {
+		ini_set('display_errors','Off');
+		switch (ERROR) {
+			case '0':
+				error_reporting(0);
+				register_shutdown_function('Error::message');
+				break;
+			case '1':
+				error_reporting(E_WARNING | E_NOTICE);
+				register_shutdown_function('Error::message');
+				break;
+			case '2':
+				error_reporting(E_ALL);
+				register_shutdown_function('Error::message');
+				break; 
+		}
+	}
+
 
 	/**
 	 * 記錄錯誤日記
@@ -53,36 +108,4 @@ class Error {
 	}
 
 }
-
-
-/**
- * 错误信息
- * @author wave
- */
-function error() {
-	Error::message();
-	exit;
-}
-
-
-/**
- * 选择错误信息
- * @author wave
- */
-function spl_error() {
-	switch (ERROR) {
-		case '0':
-			error_reporting(0);
-			register_shutdown_function('error');
-			break;
-		case '1':
-			error_reporting(E_WARNING | E_NOTICE);
-			register_shutdown_function('error');
-			break;
-		case '2':
-			error_reporting(E_ALL);
-			register_shutdown_function('error');
-			break; 
-	}
-}
-spl_error();
+Error::spl_error();
