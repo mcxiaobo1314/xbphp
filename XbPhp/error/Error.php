@@ -45,6 +45,14 @@ class Error {
 		if(is_array($arr) &&  isset($arr['line']) && isset($arr['file'])) {
 			$errData = read($arr['file']);
 			$errDataArr = explode("\r\n", $errData);
+			$count = count($errDataArr);
+			if($count == 1) {
+				return $errDataArr[0];
+			}
+			if($count < ($prevLine+$nextLine)) {
+				$prevLine = ceil($count / 2);
+				$nextLine = ($count - $prevLine - 1);
+			}
 			for($i = $arr['line'] - $prevLine; $i<=$arr['line']+$nextLine; $i++) {
 				if($arr['line'] - $i == 1) {
 					$str .= trim($errDataArr[$i])."\r";
