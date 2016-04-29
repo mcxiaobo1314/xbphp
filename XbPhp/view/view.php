@@ -21,6 +21,8 @@ class view
 	//获取编译消耗时间
 	public $compile_time = null;
 
+	public static $CacheData = array();
+
 	//要替换的符号
 	protected $replaced = array(
 		'sign'=>array('[',']','.',"'",'"'),
@@ -75,9 +77,11 @@ class view
 	 * 渲染模版
 	 * @param Array $array  自定义模版变量
 	 * @param string $templateFile 模版路径
+	 * @param int $cacheStatus 是否开启缓存 0否,1是
+	 * @param time $time 缓存时间,0永久,其他为缓存多少秒
 	 * @author wave
 	 */
-	public function render($array = array(),$templateFile = null) {
+	public function render($array = array(),$templateFile = null,$cacheStatus = 0) {
 		$tmpfile = !empty($templateFile) ? $templateFile : $this->_get_action();
 		//模版文件路径
 		$file_path = $this->root.ROOT_VIEW.DS.$tmpfile.$this->suffix;
@@ -90,10 +94,16 @@ class view
 			load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'); 
 			exit;
 		}
-
-		extract($array);
-		require $file_path;
+		if(empty($cacheStatus)) {
+			extract($array);
+			require $file_path;	
+		}else {
+			echo $this->cacheHtml($tmpfile,$array,$file_path);
+		}
+		
 	}
+
+
 
 	/**
 	 * layout渲染模版
@@ -106,6 +116,7 @@ class view
 		$file_path = $this->root.DS.'layout'.DS."index.php";
 		require $file_path;
 	}
+
 
 	/**
 	 * 引入模版返回代碼
@@ -134,6 +145,25 @@ class view
 		require $path;
 		$end_time = microtime(true); //获取结束时间
 		$this->compile_time = ' (display方法消耗了'.sprintf('%0.4f',($end_time - $start_time)).'秒)';
+	}
+
+	/**
+	 * 缓存HTML
+	 * @param String $file 缓存文件名
+	 * @param String $array 缓存定义的变量
+	 * @param String $include_path 缓存文件路径
+	 * @author wave
+	 */
+	private function cacheHtml($file,$array,$include_path) {
+		$file = str_replace(array('/','\\','.'), '_', $file);
+		if(!isset(self::$CacheData[$file])) {
+			ob_start();
+			extract($array);
+			require $include_path;	
+			self::$CacheData[$file] = ob_get_contents();
+			ob_clean();
+		}
+		return self::$CacheData[$file];
 	}
 
 	/**

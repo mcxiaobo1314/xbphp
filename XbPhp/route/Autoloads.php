@@ -16,10 +16,10 @@ class XbphpAutoload {
 	 * @author wave
 	 */
 	public static function autoload($class_name) {
+		self::strposAutoload($class_name,'Cache',ROOT.DS.ROOT_PATH.DS.CACHE.DS);
 		self::strposAutoload($class_name,'Controller',ROOT.DS.ROOT_PATH.DS.ROOT_CONTROLLER.DS);
 		self::strposAutoload($class_name,'Model',ROOT.DS.ROOT_PATH.DS.ROOT_MODEL.DS);
 		self::strposAutoload($class_name,'view',ROOT.DS.ROOT_PATH.DS.ROOT_VIEW.DS);
-		self::strposAutoload($class_name,'Cache',ROOT.DS.ROOT_PATH.DS.CACHE.DS);
 	}
 	
 	/**
