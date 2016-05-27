@@ -66,18 +66,14 @@ class App
 					$this->route('trends',$request,$route,$controller,$action);
 				}
 				call_user_func_array(array($xb,$action),$request);
-			}else {
-				load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'); 
-				exit;
 			}
-		}else {
-			load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl');
-			exit;
 		}
 		//打开DEUG
 		if(DEBUG) {
 			self::debug();
 		}
+		load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl');
+		exit;
 	}
 
 	/**
@@ -100,6 +96,7 @@ class App
 		}
 
 		if(preg_match($route[$op][rtrim($controller,'Controller.php')][$action],$request,$arr)) {
+			$valueArr = isset($arr[0]) ? explode('/', $arr[0]) : array();
 			$request = array_values(array_filter(array_splice($arr,0,1)));
 			return $arr;
 		}else {
