@@ -154,11 +154,14 @@ class view
 	 * @param String $include_path 缓存文件路径
 	 * @author wave
 	 */
-	private function cacheHtml($file,$array,$include_path) {
+	private function cacheHtml($file,$array = array(),$include_path) {
 		$file = str_replace(array('/','\\','.'), '_', $file);
 		if(!isset(self::$CacheData[$file])) {
 			ob_start();
-			extract($array);
+			if(!empty($array)) {
+				extract($array);
+			}
+
 			require $include_path;	
 			self::$CacheData[$file] = ob_get_contents();
 			ob_clean();
@@ -205,7 +208,8 @@ class view
 		//判断编译文件是否存在，或者模版文件修改时间小于编译文件修改的时间
 		if(!is_file($tmp_path.DS.$tmp_name) || ($file_path_time > $tmp_path_time)) 
 		{
-			$html = file_get_contents($file_path);
+			$html = $this->cacheHtml($tmp_name,array(),$file_path);
+			//$html = file_get_contents($file_path);
 			$html = $this->_include($html);
 			$html = $this->_if($html);
 			$html = $this->_foreach($html);
