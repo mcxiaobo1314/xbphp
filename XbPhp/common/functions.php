@@ -116,7 +116,10 @@ function read($path,$m ='r',$size=1024) {
 function write($path,$data,$m = 'r') {
 	if(file_exists($path)) {
 		$fp = fopen($path,$m);
-		fwrite($fp, $data);
+		if (flock($fp, LOCK_EX)) { 
+			fwrite($fp, $data);
+			flock($fp, LOCK_UN);
+		}
 		fclose($fp);
 		return true;
 	}
