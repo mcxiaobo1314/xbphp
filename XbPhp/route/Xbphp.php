@@ -32,11 +32,8 @@ class Xbphp  {
 
 		if(!empty($params) && isset($params[count($params) - 1]) ) {
 			$arr =array_filter(explode('/',$params[count($params) - 1]));
-			if(count($arr) >=1  && strpos($params[count($params) - 1],'.') !== false) {
+			if(count($arr) >=1) {
 				$params = self::strposReplace($params,'.');
-			}
-			
-			if(count($arr) >=1  && strpos($params[count($params) - 1],'?') !== false) {
 				$params = self::strposReplace($params,'?');
 			}
 		}
@@ -56,8 +53,10 @@ class Xbphp  {
 	 * @author wave
 	 */
 	public static function strposReplace($params,$str) {
-		$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],$str));
-		$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
+		if(strpos($params[count($params) - 1],$str) !== false) {
+			$str = substr($params[count($params) - 1],strpos($params[count($params) - 1],$str));
+			$params[count($params)- 1] = str_replace($str,'',$params[count($params) - 1]);
+		}
 		return $params;
 	}
 
