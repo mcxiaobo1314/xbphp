@@ -12,33 +12,36 @@ class Xbphp  {
 	 * @author wave
 	 */
 	public static function getServerUrl() {
-		header("X-Powered-By:XbPHP");
-		if(!empty($_SERVER['ORIG_PATH_INFO'])) {
-			$url = $_SERVER['ORIG_PATH_INFO'];
-		//windows or linux  nginx apache属性
-		}elseif(!empty($_SERVER['PATH_INFO'])) {
-			$url = $_SERVER['PATH_INFO'];
-		}elseif(!empty($_SERVER['REQUEST_URI'])) {
-			$url = $_SERVER['REQUEST_URI'];
-		}
-		$url = self::strposPath($url,strtolower(ROOT_PATH));
-		$params = !empty($url) ? explode('/',ltrim(strip_tags($url),'/')) : '';
-		if(count($params) == 1) {
-			$url_arr = parse_url($url);
-			$params[0] = isset($url_arr['path']) ?  ltrim($url_arr['path'],'/') : '';
-			$params[1] = isset($url_arr['query']) ?  $url_arr['query'] : '';
-		}
-		self::seachUnset(strtolower(basename(ROOT)),$params);
-
-		if(!empty($params) && isset($params[count($params) - 1]) ) {
-			$arr =array_filter(explode('/',$params[count($params) - 1]));
-			if(count($arr) >=1) {
-				$params = self::strposReplace($params,'.');
-				$params = self::strposReplace($params,'?');
+		if(php_sapi_name() == 'cli') {
+			$argv = array_filter(str_replace('index.php', '', $_SERVER['argv']));
+			$params = $argv;
+		}else {
+			header("X-Powered-By:XbPHP");
+			if(!empty($_SERVER['ORIG_PATH_INFO'])) {
+				$url = $_SERVER['ORIG_PATH_INFO'];
+			//windows or linux  nginx apache属性
+			}elseif(!empty($_SERVER['PATH_INFO'])) {
+				$url = $_SERVER['PATH_INFO'];
+			}elseif(!empty($_SERVER['REQUEST_URI'])) {
+				$url = $_SERVER['REQUEST_URI'];
+			}
+			$url = self::strposPath($url,strtolower(ROOT_PATH));
+			$params = !empty($url) ? explode('/',ltrim(strip_tags($url),'/')) : '';
+			if(count($params) == 1) {
+				$url_arr = parse_url($url);
+				$params[0] = isset($url_arr['path']) ?  ltrim($url_arr['path'],'/') : '';
+				$params[1] = isset($url_arr['query']) ?  $url_arr['query'] : '';
+			}
+			self::seachUnset(strtolower(basename(ROOT)),$params);
+			if(!empty($params) && isset($params[count($params) - 1]) ) {
+				$arr =array_filter(explode('/',$params[count($params) - 1]));
+				if(count($arr) >=1) {
+					$params = self::strposReplace($params,'.');
+					$params = self::strposReplace($params,'?');
+				}
 			}
 		}
-
-		 //删除目录文件
+		//删除目录文件
 		self::seachUnset(strtolower(APP_PATH),$params);
 		$params = array_values(array_filter($params));
 		return (is_array($params) && count($params) > 1)  ? $params : '';
@@ -78,28 +81,33 @@ class Xbphp  {
 	 * @author wave
 	 */
 	public static function getUrlPath() {
-		if(isset($_SERVER['REDIRECT_URL'])) {
-			//这个是linux或windows自动获取目录
-			$pathinfo = $_SERVER['REDIRECT_URL']; 
-			$pathinfo = self::strposPath($pathinfo,strtolower(ROOT_PATH));
-			$arr = array_values(array_filter(explode('/',strip_tags($pathinfo))));
-			self::seachUnset(strtolower(ROOT_PATH),$arr);
-			self::seachUnset(strtolower(basename(ROOT)),$arr);
-		}else { //单独LINUX动态记录目录
-			$_SERVER['PHP_SELF'] = str_replace(array('/index.php'), '', $_SERVER['PHP_SELF']);
-			if(!empty($_SERVER['PHP_SELF'])) {
-				$arr = array_values(array_filter(explode('/', $_SERVER['PHP_SELF'])));
-				if(count($arr) >= 1) {
+		if(php_sapi_name() == 'cli') {
+			if(isset($argv['1']) && file_exists(ROOT.DS.$argv['1'].DS)) {
+				define('APP_PATH',$argv['1']);
+			}
+		}else {
+			if(isset($_SERVER['REDIRECT_URL'])) {
+				//这个是linux或windows自动获取目录
+				$pathinfo = $_SERVER['REDIRECT_URL']; 
+				$pathinfo = self::strposPath($pathinfo,strtolower(ROOT_PATH));
+				$arr = array_values(array_filter(explode('/',strip_tags($pathinfo))));
+				self::seachUnset(strtolower(ROOT_PATH),$arr);
+				self::seachUnset(strtolower(basename(ROOT)),$arr);
+			}else { //单独LINUX动态记录目录
+				$_SERVER['PHP_SELF'] = str_replace(array('/index.php'), '', $_SERVER['PHP_SELF']);
+				if(!empty($_SERVER['PHP_SELF'])) {
+					$arr = array_values(array_filter(explode('/', $_SERVER['PHP_SELF'])));
+					if(count($arr) >= 1) {
+						self::seachUnset(strtolower(basename(ROOT)),$arr);
+					}
+				}else { //windows nginx 偽靜態
+					$arr =  array_values(array_filter(explode('/',ltrim(strip_tags($_SERVER['REQUEST_URI']),'/'))));
 					self::seachUnset(strtolower(basename(ROOT)),$arr);
 				}
-			}else { //windows nginx 偽靜態
-				$arr =  array_values(array_filter(explode('/',ltrim(strip_tags($_SERVER['REQUEST_URI']),'/'))));
-				self::seachUnset(strtolower(basename(ROOT)),$arr);
 			}
-		}
-
-		if(isset($arr['0']) && file_exists(ROOT.DS.$arr['0'].DS)) {
-			define('APP_PATH',$arr['0']);
+			if(isset($arr['0']) && file_exists(ROOT.DS.$arr['0'].DS)) {
+				define('APP_PATH',$arr['0']);
+			}
 		}
 	}
 

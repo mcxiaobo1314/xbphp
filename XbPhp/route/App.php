@@ -114,6 +114,9 @@ class App
 	 */
 	protected static function getUrl() {
 		$pathinfo  = Xbphp::getServerUrl();
+		if(php_sapi_name() == 'cli') {
+			return $pathinfo;
+		}
 		if(empty($pathinfo)) {
 			if(!empty($_GET) && isset($_GET[M]) && isset($_GET[A])) {
 				$pArr =array_filter(self::replaceArr(array($_GET[M],$_GET[A]),'',$_GET));
