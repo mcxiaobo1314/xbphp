@@ -97,7 +97,7 @@ function read($path,$m ='r',$size=1024) {
 	if(file_exists($path)) {
 		$fp = fopen($path,$m);
 		while(!feof($fp)) {
-			$val .= fread($fp,$size);
+			$val .= fgets($fp);
 		}
 		fclose($fp);
 		clearstatcache();//清除文件缓存
@@ -116,10 +116,7 @@ function read($path,$m ='r',$size=1024) {
 function write($path,$data,$m = 'r') {
 	if(file_exists($path)) {
 		$fp = fopen($path,$m);
-		if (flock($fp, LOCK_EX)) { 
-			fwrite($fp, $data);
-			flock($fp, LOCK_UN);
-		}
+		fwrite($fp, $data);
 		fclose($fp);
 		return true;
 	}
@@ -162,19 +159,19 @@ function curl($url,$request = null,$send_data = null) {
 /**
  * 创建树形目录文件夹
  * @param String $path  文件夹名字
- * @param String $cut   要截取的字符串
  * @param int  $p       权限
  * @author wave
  */
-function mkdirs($path,$cut = '/',$p = 0777) {
-	$file = APP_PATH.DS;
-	$arr = array_filter(explode($cut,$path));
-	foreach($arr as $key => $val) {
-		$file .= $val.DS;
-		if(!file_exists(ROOT.DS.$file) && !is_dir(ROOT.DS.$file)) {
-			@mkdir(ROOT.DS.$file,$p);
+function mkdirs($path,$p = 0777) {
+	$file = ROOT.DS.APP_PATH.DS.$path.DS;
+	if(!file_exists($file) && !is_dir($file)) {
+		@mkdir($file,$p,true);
+		if(function_exists('chmod')) {
+			@chmod($file,$p);
 		}
 	}
+
+	
 }
 
 /**
