@@ -289,7 +289,7 @@ class view
 
 	/**
 	 * 模版标签forach[支持嵌套,与smarty写法差多]
-	 * <{foreach item=$arr key=$k val=$v}><{$k}>---<{$v}><{/foreach}>
+	 * <{foreach item=$arr key=$k val=$v}><{$arr.k}>---<{$arr.v}><{/foreach}>
 	 * @param string $html 要替换的HTML的代码
 	 * @return HTML
 	 * @author wave
