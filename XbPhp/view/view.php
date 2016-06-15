@@ -176,7 +176,6 @@ class view
      * @author wave
 	 */
 	private function _compresFile($templateFile = null) {
-
 		$tmpfile = !empty($templateFile) ? $templateFile : $this->_get_action();
 		//编译文件路径
 		$tmp_path  = $this->root.CACHE.DS.TEMPLATES;
@@ -207,7 +206,7 @@ class view
 		
 		//判断编译文件是否存在，或者模版文件修改时间小于编译文件修改的时间
 		if(!is_file($tmp_path.DS.$tmp_name) || ($file_path_time > $tmp_path_time)) 
-		{
+		 {
 			$html = $this->cacheHtml($tmp_name,array(),$file_path);
 			//$html = file_get_contents($file_path);
 			$html = $this->_include($html);
@@ -227,32 +226,33 @@ class view
 	 * @return resource
 	 * @author wave
 	 */
-	private function _echo($html) {
+	private function _echo($html,$flag = false) {
+		$preg = $flag === false ? '(\$[a-zA-Z_][a-zA-Z0-9_]*)' : '(\$[a-zA-Z_][a-zA-Z0-9_]*\.[a-zA-Z_][a-zA-Z0-9_]*)';
+		$replaced = '/'.$this->left_delimiter.$preg.$this->right_delimiter.'/is';
+		if(preg_match_all($replaced,$html,$arr)) {
+			if(!isset($arr[1]) && count($arr[1]) === 0) {
+				return $html;
+			}
+			$arr[1] = str_replace(array('$'), '', $arr[1]);
+			$replaceArr = array();
+			$strArr = array();
 
-		$replaced = '/'.$this->left_delimiter.'\$(.*?)'.$this->right_delimiter.'/is';
-
-		if(preg_match_all($replaced,$html,$garr,PREG_SET_ORDER)) {
-			foreach($garr as $key => $val) {
-				if(isset($val['1'])) {
-
-					$val['1'] = str_replace($this->replaced['sign'],' ', $val['1']);
-					$v_arr = array_values(array_filter(explode(' ', $val['1'])));
-					$_str = null;
-
-					foreach($v_arr as $k => $v) {
-						if($k == 0) {
-							$_str .= '$this->_value["'.$v.'"]';
-						}else{
-							$_str .= '["'.$v.'"]';
-						}
-					}
-
-					$_str = '<?php echo '.$_str.'; ?>';
-					$html = str_replace($val['0'],$_str,$html);
+			foreach($arr[1] as $k => $v) {
+				if(strpos($v, '.') === false) {
+					$replaceArr[] = '<?php echo $this->_value["'.$v.'"]; ?>';
+				}else {
+					$strArr[] = $this->left_delimiter .'$' . $v . $this->right_delimiter;
+					$v = explode('.', $v);
+					$replaceArr[] = '<?php echo $this->_value["'.$v[1].'"]; ?>';
+					
 				}
 			}
+			if(!empty($strArr)) {
+				return array('strArr'=>$strArr , 'replaceArr'=>$replaceArr);
+			}else {
+				$html = str_replace($arr[0],$replaceArr,$html);
+			}
 		}
-
 		return $html;
 	}
 
@@ -264,53 +264,26 @@ class view
 	 * @author wave
 	 */
 	private function _include($html) {
-
 		//正则替换include函数
-		$preg_include = '/'.$this->left_delimiter.'include\s+file=\"(.*?)\"'.$this->right_delimiter.'/is';
-		
-		if(preg_match_all($preg_include,$html,$arr,PREG_SET_ORDER)) {
-			foreach($arr as $key => $val) {
-				$blooen = 0; //判断是否有加入模版变量
-				$_str = ''; //要保存的字符串
-				$val['1'] = $this->_replace_arr(
-					array($this->left_delimiter,$this->right_delimiter),
-					' ',
-					$val['1']
-				);
-				foreach($val['1'] as $v) {
-					$_val = '';
-					if(strpos($v,'$')!== false) {
-						$blooen = 1;
-						if(strpos($v,'[') !==false) {
-
-							$_val = substr($v,strpos($v,'$')+strlen('$'),strpos($v,'$')+strpos($v,'[')-strlen('['));
-							$_str .= '$this->_value["'.$_val.'"]';
-							$_val  = substr($v,strpos($v,'$')+strpos($v,'['));
-							$_str .= $_val.".";
-
-						}else {
-
-							$_val = substr($v,strpos($v,'$')+strlen('$'));
-							$_str .= '$this->_value["'.$_val.'"].';
-						}
-
-					}else {
-
-						$_str .= '"'.$v.'".';
-					}
-				}
-				if(empty($blooen)) { //没有模版变量
-					$path_str = str_replace('\\','/',$this->_compresFile(str_replace(array('"',"'"),'',rtrim($_str,'.')))); 
-					$_str = '<?php include "'.$path_str.'"; ?>';
-					$html = str_replace($val['0'],$_str,$html);	
-				}else { //引入的模版变量
-					$_str = '<?php include '.rtrim($_str,'.').'; ?>';
-					$html = str_replace($val['0'],$_str,$html);	
-				}
-				
-			}
+		$replaced = '/'.$this->left_delimiter.'include\s+file=\"(([a-zA-Z0-9_\.\/]*)|(\$[a-zA-Z_][a-zA-Z0-9_\.\/]*))\"'.$this->right_delimiter.'/is';
+		if(preg_match_all($replaced,$html,$arr)){
+		    if(!isset($arr[1]) && count($arr[1]) === 0) {
+		    	return $html;
+		    }
+	        $replaceArr = array();
+	        foreach($arr[1] as $val) {
+	            if(strpos($val, '$') !== false) {
+	                $val = str_replace(array('$'), '', $val);
+	                $valArr = explode('/', $val);
+	                $val = !empty($valArr[0])  ? $this->_value["$valArr[0]"] : $this->_value["$val"]; 
+	                $val .= !empty($valArr[1]) ? '/'.$valArr[1] : '';
+	            }
+            	$path_str = str_replace('\\','/',$this->_compresFile($val)); 
+				$replaceArr[] = '<?php include "'.$path_str.'"; ?>';
+ 
+	        } 
+	        $html = str_replace($arr[0],$replaceArr,$html);
 		}
-
 		return $html;
 	}
 
@@ -322,51 +295,51 @@ class view
 	 * @author wave
 	 */
 	private function _foreach($html) {
-
-		$preg = '/'.$this->left_delimiter.'foreach (.*?)'.$this->right_delimiter.'/is';
-
-		if(preg_match_all($preg,$html,$arr,PREG_SET_ORDER)) {
-			foreach($arr as $key => $val) {
-
-				$_str = '';
-				$val['1'] = $this->_replace_arr(array('as','=>'),' ',$val['1']);
-
-				if(is_array($val['1'])) {
-					foreach($val['1'] as $k => $v) {
-
-						$_val = '';
-
-						if($k == 0) {
-							if(strpos($v,'$')!== false) {
-								if(strpos($v,'[') !==false) {
-
-									$_val = substr($v,strpos($v,'$')+strlen('$'),strpos($v,'$')+strpos($v,'[')-strlen('['));
-									$_str .= '$this->_value["'.$_val.'"]';
-									$_val  = substr($v,strpos($v,'$')+strpos($v,'['));
-									$_str .= $_val."";
-								}else {
-
-									$_val = substr($v,strpos($v,'$')+strlen('$'));
-									$_str .= '$this->_value["'.$_val.'"]';
-								}
-
-								$_str .= ' as ';
-							}
-						}else {
-
-							$_val = substr($v,strpos($v,'$')+strlen('$'));
-							$_str .= '$this->_value["'.$_val.'"]';
-							$_str .= ' => ';
-						}
-					}
-
-					$_str ='<?php foreach( '.rtrim($_str,' => ').' ) { ?>';
-					$html = str_replace($val['0'],$_str,$html);
-					$html = str_replace('<{/foreach}>','<?php } ?>',$html);
-				}
-			}
+		$replaced = '/'.$this->left_delimiter.'foreach\s*item\=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*key\=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*val=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*'.$this->right_delimiter.'\s*(.*?)\s*'.$this->left_delimiter.'\/foreach'.$this->right_delimiter.'/is';
+		if(preg_match_all($replaced,$html,$arr,PREG_SET_ORDER)){
+		    if(empty($arr)) {
+		      return $html;
+		    }
+		    $strArr = array();
+		    $replaceArr = array();
+		    foreach($arr as $k => $v) {
+		        $str = '<?php foreach(';
+		        $firstStr = '';
+		        foreach ($v as $key => $value) {
+		              switch ($key) {
+		                case 0:
+		                  if(preg_match('/'.$this->left_delimiter.'foreach\s*item\=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*key\=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*val=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*'.$this->right_delimiter.'/is', $value,$harr)){
+		                  	 $strArr[] = !empty($harr[0]) ? $harr[0] : '';
+		                  }
+		                  break;
+		                case 1:
+		                  $value = str_replace(array('$'), '', $value);
+		                  $firstStr = ' $this->_value["'.$value.'"]';
+		                  $str .= $firstStr.' as ';
+		                  break;
+		                case 2:
+		                  $value = str_replace(array('$'), '', $value);
+		                  $str .= ' $this->_value["'.$value.'"] => ';
+		                  break;
+		                case 3:
+		                  $value = str_replace(array('$'), '', $value);
+		                  $str .= ' $this->_value["'.$value.'"] ){  ?>'; 
+						  $replaceArr[] = $str;
+						  break;
+		                default:
+		                  $listArr = $this->_echo($value,true);
+		                  break;
+		              }
+		        }
+		        
+		    }
+		    if(!empty($listArr)) {
+		    	$html = str_replace($listArr['strArr'], $listArr['replaceArr'], $html);
+		    	$html = str_replace($this->left_delimiter.'/foreach'.$this->right_delimiter, '<?php } ?>', $html);
+		    }
+		    $html = str_replace($strArr, $replaceArr, $html);
+		  
 		}
-
 		return $html;
 	}
 
