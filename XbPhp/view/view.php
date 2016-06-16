@@ -199,17 +199,16 @@ class view
 		}
 		
 		//判断编译文件是否存在，或者模版文件修改时间小于编译文件修改的时间
-		// if(!is_file($tmp_path.DS.$tmp_name) || ($file_path_time > $tmp_path_time)) 
-		 // {
+		if(!is_file($tmp_path.DS.$tmp_name) || ($file_path_time > $tmp_path_time)) 
+		{
 			$html = $this->cacheHtml($tmp_name,array(),$file_path);
-			//$html = file_get_contents($file_path);
 			$html = $this->_include($html);
 			$html = $this->_if($html);
 			$html = $this->_foreach($html);
 			$html = $this->_echo($html);
 			$html = (COMPRESS == 1) ? $this->compress_html($html) : $html;
 			file_put_contents($tmp_path.DS.$tmp_name,$html);
-		// }
+		}
 		return $tmp_path.DS.$tmp_name;
 	}
 
@@ -294,9 +293,7 @@ class view
 		        foreach ($v as $key => $value) {
 		              switch ($key) {
 		                case 0:
-		                  if(preg_match('/'.$this->left_delimiter.'foreach\s*item\=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*key\=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*val=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*'.$this->right_delimiter.'/is', $value,$harr)){
-		                  	 $strArr[] = !empty($harr[0]) ? $harr[0] : '';
-		                  }
+		                  	$strArr[] = $value;
 		                  break;
 		                case 1:
 		                  $value = str_replace(array('$'), '', $value);
