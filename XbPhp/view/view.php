@@ -98,7 +98,6 @@ class view
 	}
 
 
-
 	/**
 	 * layout渲染模版
 	 * @param Array $array  自定义模版变量
@@ -149,17 +148,16 @@ class view
 	 * @author wave
 	 */
 	private function cacheHtml($file,$array = array(),$include_path) {
+		ob_start();
 		$file = str_replace(array('/','\\','.'), '_', $file);
 		if(!isset(self::$CacheData[$file])) {
-			ob_start();
 			if(!empty($array)) {
 				extract($array);
 			}
-
 			require $include_path;	
 			self::$CacheData[$file] = ob_get_contents();
-			ob_clean();
 		}
+		ob_clean();
 		return self::$CacheData[$file];
 	}
 
@@ -252,8 +250,9 @@ class view
 	 * @author wave
 	 */
 	private function _include($html) {
+		$preg = 'include\s+file=\"(([a-zA-Z0-9_\.\/]*)|(\$[a-zA-Z_][a-zA-Z0-9_\.\/]*))\"';
 		//正则替换include函数
-		$replaced = '/'.$this->left_delimiter.'include\s+file=\"(([a-zA-Z0-9_\.\/]*)|(\$[a-zA-Z_][a-zA-Z0-9_\.\/]*))\"'.$this->right_delimiter.'/is';
+		$replaced = '/'.$this->left_delimiter.$preg.$this->right_delimiter.'/is';
 		if(preg_match_all($replaced,$html,$arr)){
 		    if(!isset($arr[1]) && count($arr[1]) === 0) {
 		    	return $html;
@@ -283,7 +282,8 @@ class view
 	 * @author wave
 	 */
 	private function _foreach($html) {
-		$replaced_start = '/'.$this->left_delimiter.'foreach\s*item\=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*key\=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*val=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*'.$this->right_delimiter.'/is';
+		$preg = 'foreach\s+item\=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s+key\=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s+val=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*';
+		$replaced_start = '/'.$this->left_delimiter.$preg.$this->right_delimiter.'/is';
 		if(preg_match_all($replaced_start,$html,$arr,PREG_SET_ORDER)){
 		    $strArr = array();
 		    $replaceArr = array();
@@ -397,13 +397,9 @@ class view
 	* @return 压缩后的$string 
 	* */ 
 	protected function compress_html($string) {
-
 		$string = str_replace("\r\n", '', $string); //清除换行符
-		
 		$string = str_replace("\n", '', $string); //清除换行符
-		
 		$string = str_replace("\t", '', $string); //清除制表符
-		
 		$pattern = array (
 			"/> *([^ ]*) *</", //去掉注释标记
 			"/[\s]+/",
@@ -412,7 +408,6 @@ class view
 			"/ \"/",
 			"'/\*[^*]*\*/'"
 		);
-
 		$replace = array (
 			">\\1<",
 			" ",
@@ -421,7 +416,6 @@ class view
 			"\"",
 			""
 		);
-		
 		return preg_replace($pattern, $replace, $string);
 	}
 
@@ -449,11 +443,9 @@ class view
 	 * @author wave
 	 */
 	private function _replace_arr($replaced,$replace,$str,$explode =' ') {
-		
 		if(!empty($replaced) && !empty($replace)) {
 			$str = str_replace($replaced, $replace, $str);
 		}
-
 		$arr = array_filter(explode($explode, $str));
 		$arr = array_values($arr);
 		return $arr;
@@ -465,7 +457,6 @@ class view
 	 * @author wave
 	 */
 	private function _get_action() {
-
 		$arr = Xbphp::getServerUrl();
 		if(!isset($arr['0'])) {
 			$arr['0'] = M_INDEX;
