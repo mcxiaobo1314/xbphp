@@ -220,26 +220,39 @@ class view
 	private function _echo($html) {
 		$preg = '((\$[a-zA-Z_][a-zA-Z0-9_]*)|(\$[a-zA-Z_][a-zA-Z0-9_]*\.[a-zA-Z_][a-zA-Z0-9_]*))';
 		$replaced = '/'.$this->left_delimiter.$preg.$this->right_delimiter.'/is';
-		if(preg_match_all($replaced,$html,$arr)) {
-			if(!isset($arr[1]) && count($arr[1]) === 0) {
-				return $html;
-			}
-			$arr[1] = str_replace(array('$'), '', $arr[1]);
-			$replaceArr = array();
-			$strArr = array();
-
-			foreach($arr[1] as $k => $v) {
-				if(strpos($v, '.') === false) {
-					$replaceArr[] = '<?php echo $this->_value["'.$v.'"]; ?>';
-				}else {
-					$v = explode('.', $v);
-					$v = '["'.implode(''.'"]["', $v).'"]';
-					$replaceArr[] = '<?php echo $this->_value'.$v.'; ?>';
-				}
-			}
-			$html = str_replace($arr[0],$replaceArr,$html);
+		if(!preg_match_all($replaced,$html,$arr)) {
+			return $html;
 		}
+		if(!isset($arr[1]) && count($arr[1]) === 0) {
+			return $html;
+		}
+		$arr[1] = $this->_replace('$', '', $arr[1]);
+		$replaceArr = array();
+		$strArr = array();
+		foreach($arr[1] as $k => $v) {
+			$replaceArr[] = $this->analyticalVariables($v);
+		}
+		$html = $this->_replace($arr[0],$replaceArr,$html);
 		return $html;
+	}
+
+	/**
+	 * 字符串解析变量
+	 * @param string $str 要解析的字符串
+	 * @param bool $flag 是否直接输出变量值,还是解析成字符串变量,默认不开启,真针对普通变量，数组变量无效
+	 * @param bool $phpFlag 是否解析成PHP代码字符串,默认开启
+	 * @return string
+	 * @author wave
+	 */
+	private function analyticalVariables($str,$flag = false,$phpFlag = true){
+		if(strpos($str, '.') === false) {
+			$str =  ($flag === false) ? ' $this->_value["'.$str.'"]' : $this->_value["$str"];
+		}else {//数组变量解析
+			$str = explode('.', $str);
+			$str = '["'.implode(''.'"]["', $str).'"]';
+			$str = '$this->_value'.$str;
+		}
+		return ($phpFlag === true) ? '<?php echo '.$str.'; ?>' : $str;
 	}
 
 	/**
@@ -253,24 +266,24 @@ class view
 		$preg = 'include\s+file=\"(([a-zA-Z0-9_\.\/]*)|(\$[a-zA-Z_][a-zA-Z0-9_\.\/]*))\"';
 		//正则替换include函数
 		$replaced = '/'.$this->left_delimiter.$preg.$this->right_delimiter.'/is';
-		if(preg_match_all($replaced,$html,$arr)){
-		    if(!isset($arr[1]) && count($arr[1]) === 0) {
-		    	return $html;
-		    }
-	        $replaceArr = array();
-	        foreach($arr[1] as $val) {
-	            if(strpos($val, '$') !== false) {
-	                $val = str_replace(array('$'), '', $val);
-	                $valArr = explode('/', $val);
-	                $val = !empty($valArr[0])  ? $this->_value["$valArr[0]"] : $this->_value["$val"]; 
-	                $val .= !empty($valArr[1]) ? '/'.$valArr[1] : '';
-	            }
-            	$path_str = str_replace('\\','/',$this->_compresFile($val)); 
-				$replaceArr[] = '<?php include "'.$path_str.'"; ?>';
- 
-	        } 
-	        $html = str_replace($arr[0],$replaceArr,$html);
+		if(!preg_match_all($replaced,$html,$arr)){
+		    return $html;
 		}
+		if(!isset($arr[1]) && count($arr[1]) === 0) {
+		   	return $html;
+		}
+        $replaceArr = array();
+        foreach($arr[1] as $val) {
+            if(strpos($val, '$') !== false) {
+                $val = $this->_replace('$', '', $val);
+                $valArr = explode('/', $val);
+                $val = !empty($valArr[0]) ? $this->analyticalVariables($valArr[0],true,false) : $this->analyticalVariables($val,true,false); 
+                $val .= !empty($valArr[1]) ? '/'.$valArr[1] : '';
+            }
+        	$path_str = $this->_replace('\\','/',$this->_compresFile($val)); 
+			$replaceArr[] = '<?php include "'.$path_str.'"; ?>';
+        } 
+        $html = $this->_replace($arr[0],$replaceArr,$html);
 		return $html;
 	}
 
@@ -284,38 +297,36 @@ class view
 	private function _foreach($html) {
 		$preg = 'foreach\s+item\=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s+key\=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s+val=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*';
 		$replaced_start = '/'.$this->left_delimiter.$preg.$this->right_delimiter.'/is';
-		if(preg_match_all($replaced_start,$html,$arr,PREG_SET_ORDER)){
-		    $strArr = array();
-		    $replaceArr = array();
-		    foreach($arr as $k => $v) {
-		        $str = '<?php foreach(';
-		        $firstStr = '';
-		        foreach ($v as $key => $value) {
-		              switch ($key) {
-		                case 0:
-		                  	$strArr[] = $value;
-		                  break;
-		                case 1:
-		                  $value = str_replace(array('$'), '', $value);
-		                  $firstStr = ' $this->_value["'.$value.'"]';
-		                  $str .= $firstStr.' as ';
-		                  break;
-		                case 2:
-		                  $value = str_replace(array('$'), '', $value);
-		                  $str .= ' $this->_value["'.$value.'"] => ';
-		                  break;
-		                case 3:
-		                  $value = str_replace(array('$'), '', $value);
-		                  $str .= ' $this->_value["'.$value.'"] ){  ?>'; 
-						  $replaceArr[] = $str;
-						  break;
-		              }
-		        }
-		        
-		    }
-		    $html = str_replace($strArr, $replaceArr, $html);
-		    $html = str_replace($this->left_delimiter.'/foreach'.$this->right_delimiter, '<?php } ?>', $html);
+		if(!preg_match_all($replaced_start,$html,$arr,PREG_SET_ORDER)){
+		   	return $html;
 		}
+		$strArr = array();
+		$replaceArr = array();
+	    foreach($arr as $k => $v) {
+	        $str = '<?php foreach(';
+	        $firstStr = '';
+	        foreach ($v as $key => $value) {
+        	   ($key !== 0) &&  $value = $this->_replace('$','',$value);
+               switch ($key) {
+	                case 0:
+		                $strArr[] = $value;
+		                break;
+	                case 1:
+		                $firstStr = $this->analyticalVariables($value,false,false);
+		                $str .= $firstStr.' as ';
+		                break;
+	                case 2:
+		                $str .= $this->analyticalVariables($value,false,false).' => ';
+		                break;
+	                case 3:
+		                $str .= $this->analyticalVariables($value,false,false).' ){  ?>'; 
+						$replaceArr[] = $str;
+						break;
+	            }
+	        }
+	    }
+	    $html = $this->_replace($strArr, $replaceArr, $html);
+	    $html = $this->_replace($this->left_delimiter.'/foreach'.$this->right_delimiter, '<?php } ?>', $html);
 		return $html;
 	}
 
@@ -361,7 +372,7 @@ class view
 					if(strpos($val,'$') !== false) {
 
 						$str = substr($val,1);
-						$v_arr = $this->_replace_arr($this->replaced['sign'],' ',$str,' ');
+						$v_arr = $this->_replace($this->replaced['sign'],' ',$str,' ');
 						$_str = null;
 
 						foreach($v_arr as $k => $v) {
@@ -371,7 +382,7 @@ class view
 								$_str .= '["'.$v.'"]';
 							}
 						}
-						$val = str_replace($val,$left_bracket.$_str.$right_bracket,$val);
+						$val = $this->_replace($val,$left_bracket.$_str.$right_bracket,$val);
 					}
 
 					$conditions .= $val.' ';
@@ -380,9 +391,9 @@ class view
 					}
 				}
 
-				$value['2'] = str_replace($this->left_delimiter.'else'.$this->right_delimiter,'<?php }else { ?>',$value['2']);
+				$value['2'] = $this->_replace($this->left_delimiter.'else'.$this->right_delimiter,'<?php }else { ?>',$value['2']);
 				$if = '<?php if('.$conditions.'){?>'.$value['2'].'<?php } ?>';
-				$html = str_replace($value['0'],$if,$html);
+				$html = $this->_replace($value['0'],$if,$html);
 			}
 
 			$html = $this->_if($html);
@@ -439,16 +450,19 @@ class view
 	 * @param Array or String $replace 被替换的
 	 * @param String $str 查找字符串
 	 * @param String $explode 截取的字符串
-	 * @return Array
+	 * @return Array|string
 	 * @author wave
 	 */
-	private function _replace_arr($replaced,$replace,$str,$explode =' ') {
-		if(!empty($replaced) && !empty($replace)) {
+	private function _replace($replaced,$replace,$str,$explode = NULL) {
+		if(!empty($replaced)) {
 			$str = str_replace($replaced, $replace, $str);
 		}
-		$arr = array_filter(explode($explode, $str));
-		$arr = array_values($arr);
-		return $arr;
+		if($explode !== NULL) {
+			$arr = array_filter(explode($explode, $str));
+			$arr = array_values($arr);
+			return $arr;
+		}
+		return $str;
 	}
 
 	/**
