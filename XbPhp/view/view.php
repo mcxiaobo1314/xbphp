@@ -23,12 +23,6 @@ class view
 
 	public static $CacheData = array();
 
-	//要替换的符号
-	protected $replaced = array(
-		'sign'=>array('[',']','.',"'",'"'),
-		'foreach'=>array('as','=>')
-	);
-
 	public function __construct() {
 
 		//定义根目录
@@ -205,8 +199,8 @@ class view
 		}
 		
 		//判断编译文件是否存在，或者模版文件修改时间小于编译文件修改的时间
-		if(!is_file($tmp_path.DS.$tmp_name) || ($file_path_time > $tmp_path_time)) 
-		 {
+		// if(!is_file($tmp_path.DS.$tmp_name) || ($file_path_time > $tmp_path_time)) 
+		 // {
 			$html = $this->cacheHtml($tmp_name,array(),$file_path);
 			//$html = file_get_contents($file_path);
 			$html = $this->_include($html);
@@ -215,7 +209,7 @@ class view
 			$html = $this->_echo($html);
 			$html = (COMPRESS == 1) ? $this->compress_html($html) : $html;
 			file_put_contents($tmp_path.DS.$tmp_name,$html);
-		}
+		// }
 		return $tmp_path.DS.$tmp_name;
 	}
 
@@ -226,8 +220,8 @@ class view
 	 * @return resource
 	 * @author wave
 	 */
-	private function _echo($html,$flag = false) {
-		$preg = $flag === false ? '(\$[a-zA-Z_][a-zA-Z0-9_]*)' : '(\$[a-zA-Z_][a-zA-Z0-9_]*\.[a-zA-Z_][a-zA-Z0-9_]*)';
+	private function _echo($html) {
+		$preg = '((\$[a-zA-Z_][a-zA-Z0-9_]*)|(\$[a-zA-Z_][a-zA-Z0-9_]*\.[a-zA-Z_][a-zA-Z0-9_]*))';
 		$replaced = '/'.$this->left_delimiter.$preg.$this->right_delimiter.'/is';
 		if(preg_match_all($replaced,$html,$arr)) {
 			if(!isset($arr[1]) && count($arr[1]) === 0) {
@@ -241,17 +235,12 @@ class view
 				if(strpos($v, '.') === false) {
 					$replaceArr[] = '<?php echo $this->_value["'.$v.'"]; ?>';
 				}else {
-					$strArr[] = $this->left_delimiter .'$' . $v . $this->right_delimiter;
 					$v = explode('.', $v);
-					$replaceArr[] = '<?php echo $this->_value["'.$v[1].'"]; ?>';
-					
+					$v = '["'.implode(''.'"]["', $v).'"]';
+					$replaceArr[] = '<?php echo $this->_value'.$v.'; ?>';
 				}
 			}
-			if(!empty($strArr)) {
-				return array('strArr'=>$strArr , 'replaceArr'=>$replaceArr);
-			}else {
-				$html = str_replace($arr[0],$replaceArr,$html);
-			}
+			$html = str_replace($arr[0],$replaceArr,$html);
 		}
 		return $html;
 	}
@@ -289,17 +278,14 @@ class view
 
 	/**
 	 * 模版标签forach[支持嵌套,与smarty写法差多]
-	 * <{foreach item=$arr key=$k val=$v}><{$arr.k}>---<{$arr.v}><{/foreach}>
+	 * <{foreach item=$arr key=$k val=$v}><{$k}>---<{$v}><{/foreach}>
 	 * @param string $html 要替换的HTML的代码
 	 * @return HTML
 	 * @author wave
 	 */
 	private function _foreach($html) {
-		$replaced = '/'.$this->left_delimiter.'foreach\s*item\=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*key\=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*val=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*'.$this->right_delimiter.'\s*(.*?)\s*'.$this->left_delimiter.'\/foreach'.$this->right_delimiter.'/is';
-		if(preg_match_all($replaced,$html,$arr,PREG_SET_ORDER)){
-		    if(empty($arr)) {
-		      return $html;
-		    }
+		$replaced_start = '/'.$this->left_delimiter.'foreach\s*item\=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*key\=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*val=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*'.$this->right_delimiter.'/is';
+		if(preg_match_all($replaced_start,$html,$arr,PREG_SET_ORDER)){
 		    $strArr = array();
 		    $replaceArr = array();
 		    foreach($arr as $k => $v) {
@@ -326,19 +312,12 @@ class view
 		                  $str .= ' $this->_value["'.$value.'"] ){  ?>'; 
 						  $replaceArr[] = $str;
 						  break;
-		                default:
-		                  $listArr = $this->_echo($value,true);
-		                  break;
 		              }
 		        }
 		        
 		    }
-		    if(!empty($listArr)) {
-		    	$html = str_replace($listArr['strArr'], $listArr['replaceArr'], $html);
-		    	$html = str_replace($this->left_delimiter.'/foreach'.$this->right_delimiter, '<?php } ?>', $html);
-		    }
 		    $html = str_replace($strArr, $replaceArr, $html);
-		  
+		    $html = str_replace($this->left_delimiter.'/foreach'.$this->right_delimiter, '<?php } ?>', $html);
 		}
 		return $html;
 	}
