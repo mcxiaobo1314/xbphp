@@ -197,8 +197,8 @@ class view
 		}
 		
 		//判断编译文件是否存在，或者模版文件修改时间小于编译文件修改的时间
-		if(!is_file($tmp_path.DS.$tmp_name) || ($file_path_time > $tmp_path_time)) 
-		{
+		//if(!is_file($tmp_path.DS.$tmp_name) || ($file_path_time > $tmp_path_time)) 
+		//{
 			$html = $this->cacheHtml($tmp_name,array(),$file_path);
 			$html = $this->_include($html);
 			$html = $this->_if($html);
@@ -206,7 +206,7 @@ class view
 			$html = $this->_echo($html);
 			$html = (COMPRESS == 1) ? $this->compress_html($html) : $html;
 			file_put_contents($tmp_path.DS.$tmp_name,$html);
-		}
+		//}
 		return $tmp_path.DS.$tmp_name;
 	}
 
@@ -218,7 +218,7 @@ class view
 	 * @author wave
 	 */
 	private function _echo($html) {
-		$preg = '((\$[a-zA-Z_][a-zA-Z0-9_]*)|(\$[a-zA-Z_][a-zA-Z0-9_]*\.[a-zA-Z_][a-zA-Z0-9_]*))';
+		$preg = '((\$[a-zA-Z_][a-zA-Z0-9_\|]*)|(\$[a-zA-Z_][a-zA-Z0-9_]*\.[a-zA-Z_][a-zA-Z0-9_\|]*))';
 		$replaced = '/'.$this->left_delimiter.$preg.$this->right_delimiter.'/is';
 		if(!preg_match_all($replaced,$html,$arr)) {
 			return $html;
@@ -245,12 +245,23 @@ class view
 	 * @author wave
 	 */
 	private function analyticalVariables($str,$flag = false,$phpFlag = true){
+		$strfun = '';
+		if(strpos($str, '|') !== false){
+			$strArr = explode('|', $str);
+			if(!empty($strArr[1]) && function_exists($strArr[1])) {
+				$strfun = ($flag === false) ? $strArr[1].'(' : '';
+			}
+			$str = !empty($strArr[0]) ? $strArr[0] : $str;
+		}
 		if(strpos($str, '.') === false) {
-			$str =  ($flag === false) ? ' $this->_value["'.$str.'"]' : $this->_value["$str"];
+			$str =  ($flag === false) ? $strfun.' $this->_value["'.$str.'"] ' : $this->_value["$str"];
 		}else {//数组变量解析
 			$str = explode('.', $str);
 			$str = '["'.implode(''.'"]["', $str).'"]';
-			$str = '$this->_value'.$str;
+			$str = $strfun . '$this->_value'.$str;
+		}
+		if(!empty($strfun)) {
+			$str .= ')';
 		}
 		return ($phpFlag === true) ? '<?php echo '.$str.'; ?>' : $str;
 	}
@@ -263,7 +274,7 @@ class view
 	 * @author wave
 	 */
 	private function _include($html) {
-		$preg = 'include\s+file=\"(([a-zA-Z0-9_\.\/]*)|(\$[a-zA-Z_][a-zA-Z0-9_\.\/]*))\"';
+		$preg = 'include\s+file=\"(([a-zA-Z0-9_\.\/]*)|(\$[a-zA-Z_][a-zA-Z0-9_\.\/]*[\|]*))\"';
 		//正则替换include函数
 		$replaced = '/'.$this->left_delimiter.$preg.$this->right_delimiter.'/is';
 		if(!preg_match_all($replaced,$html,$arr)){
