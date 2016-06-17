@@ -17,7 +17,7 @@ class Error {
 			self::logs($arr);
 			$prevLine = 10;
 			$code = self::getCode($arr,$prevLine);
-			$line = $arr['line'] - $prevLine+1;
+			$line = $arr['line'] - $prevLine > 0 ? $arr['line'] - $prevLine+1 : 1;
 			$jsData = read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'js'.DS.'shCore.js');
 			$jsData .= read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'js'.DS.'shBrushPhp.js');
 			$cssData = read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'css'.DS.'shCore.css');
@@ -53,7 +53,8 @@ class Error {
 				$prevLine = ceil($count / 2);
 				$nextLine = ($count - $prevLine - 1);
 			}
-			for($i = $arr['line'] - $prevLine; $i<=$arr['line']+$nextLine; $i++) {
+			$num = $arr['line'] - $prevLine > 0 ? $arr['line'] - $prevLine : 1;
+			for($i = $num; $i<=$arr['line']+$nextLine; $i++) {
 				if($arr['line'] - $i == 1) {
 					$str .= trim($errDataArr[$i])."\r";
 				}else {
@@ -83,17 +84,15 @@ class Error {
 		switch (ERROR) {
 			case '0':
 				error_reporting(0);
-				register_shutdown_function('Error::message');
 				break;
 			case '1':
 				error_reporting(E_WARNING | E_NOTICE);
-				register_shutdown_function('Error::message');
 				break;
 			case '2':
 				error_reporting(E_ALL);
-				register_shutdown_function('Error::message');
 				break; 
 		}
+		register_shutdown_function('Error::message');
 	}
 
 
