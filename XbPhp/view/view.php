@@ -300,6 +300,9 @@ class view
 		if(!preg_match_all($replaced_start,$html,$arr,PREG_SET_ORDER)){
 		   	return $html;
 		}
+		if(empty($arr)){
+			return $html;
+		}
 		$strArr = array();
 		$replaceArr = array();
 	    foreach($arr as $k => $v) {
@@ -339,68 +342,49 @@ class view
 	 */
 
 	private function _if($html) {
-
-		$preg = '/'.$this->left_delimiter.'if\s+(.*?)\s*'.$this->right_delimiter.'(.*?)'.$this->left_delimiter.'\/if'.$this->right_delimiter.'/s';
-
-		if(preg_match_all($preg,$html,$garr,PREG_SET_ORDER)) {
-			$replace = array('=','>','<','!','|','&');
-			foreach($garr as $value) {
-				$rarr = $value['1'];
-				$value['1'] =  $this->_replace_arr($replace,' ',$value['1'],' ');
-				foreach($value['1'] as $v) {
-					if(strpos($rarr,$v) !== false) {
-						$rarr = substr_replace($rarr,'',strpos($rarr,$v),strlen($v));
-					}
-				}
-
-				$rarr = $this->_replace_arr('','',$rarr,' ');
-				$conditions = null;
-
-				foreach($value['1'] as $key => $val)  { //进行遍历拼接
-
-					$left_bracket = null;   //左边括号
-					$right_bracket = null;  //右边括号
-
-					if(strpos($val,'(') !== false) { //判断是否写了左边括号
-						$left_bracket = '(';
-					}
-
-					if(strpos($val,')') !== false) { //判断是否写了右边括号 
-						$right_bracket = ')';
-					}
-
-					if(strpos($val,'$') !== false) {
-
-						$str = substr($val,1);
-						$v_arr = $this->_replace($this->replaced['sign'],' ',$str,' ');
-						$_str = null;
-
-						foreach($v_arr as $k => $v) {
-							if($k == 0) {
-								$_str .= '$this->_value["'.$v.'"]';
-							}else{
-								$_str .= '["'.$v.'"]';
-							}
-						}
-						$val = $this->_replace($val,$left_bracket.$_str.$right_bracket,$val);
-					}
-
-					$conditions .= $val.' ';
-					if(isset($rarr[$key])) {
-						$conditions.= $rarr[$key].' ';
-					}
-				}
-
-				$value['2'] = $this->_replace($this->left_delimiter.'else'.$this->right_delimiter,'<?php }else { ?>',$value['2']);
-				$if = '<?php if('.$conditions.'){?>'.$value['2'].'<?php } ?>';
-				$html = $this->_replace($value['0'],$if,$html);
+		$preg = 'if\s+(\S*)\s*([\=\>\<\!]*)\s*(\S*)\s*';
+		if(!preg_match_all('/'.$this->left_delimiter.$preg.$this->right_delimiter.'/is',$html,$arr,PREG_SET_ORDER)){
+		    return $html;
+		}
+		if(empty($arr)){
+		  return $html;
+		}
+		$listArr = array();
+		$replaceArr = array();
+		foreach ($arr as $key => $value) {
+			$str = '<?php if(';
+			foreach ($value as $k => $v) {
+			    switch ($k) {
+			      case 0:
+			        $listArr[] = $v;
+			        break;
+			    default:
+			    	if(strpos($v,'$') !== false) {
+			    		$v = $this->_replace(array('$','(',')'),'',$v);
+			    		$str .= $this->analyticalVariables($v,false,false).' ';
+			    	}else {
+			    		$str .= $v.' ';
+			    	}
+			        break;
+			    }
 			}
-
-			$html = $this->_if($html);
+			$str .= ' ) { ?>';
+			$replaceArr[] = $str;
 		}
 
+		$html = $this->_replace($listArr, $replaceArr, $html);
+		$endReArr = array(
+			$this->left_delimiter.'/if'.$this->right_delimiter,
+			$this->left_delimiter.'else'.$this->right_delimiter
+		);
+		$endArr = array(
+			'<?php } ?>',
+			'<?php }else{ ?>'
+		);
+		$html = $this->_replace($endReArr, $endArr, $html);
 		return $html;
 	}
+
 
    /** 
 	* 压缩html : 清除换行符,清除制表符,去掉注释标记 
