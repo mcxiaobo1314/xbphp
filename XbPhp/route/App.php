@@ -13,67 +13,37 @@ class App
 	 */
 	public function __construct() {
 		$params = self::getUrl();  //獲取URL參數數組
-		$request = array(); //URL的参数
-		$num = 0; //动态URL访问
-		$flag = false;
-		//动态的URL的路由器
-		if(!isset($params['rewirte'])) {
-			$params[M] = isset($params[M]) ? $params[M] : M_INDEX;
-			$params[M] =  isset(config::$disableController) ? (in_array($params[M], config::$disableController) ? M_INDEX : $params[M]) : M_INDEX;
-			$params[A] = isset($params[A]) ? $params[A] : A_INDEX;
-			$controller = $params[M].'Controller.php';
-			$action = $params[A];
-		}else {  
-			//伪静态的URL的路由器
-			if(!empty($params)) {
-				unset($params['rewirte']);
-				$params['0'] = isset($params['0']) ? $params['0'] : M_INDEX;
-				$params['0'] = isset(config::$disableController) ? (in_array($params['0'], config::$disableController) ? M_INDEX : $params['0']) : M_INDEX;
-				$params['1'] = isset($params['1']) ? $params['1'] : A_INDEX;
-				$params['1'] = Xbphp::strposReplace($params['1'],'?');
-				$controller = $params['0'].'Controller.php';
-				$action = $params['1'];
-				$num = 1;
-			}	
+		$disableArr = !empty(config::$disableController) ? config::$disableController : array();
+		$params['0'] =  !in_array($params['0'], $disableArr) ? $params['0'] : M_INDEX;
+		$params['1'] = Xbphp::strposReplace($params['1'],'?');
+		$controller = $params['0'].'Controller.php';
+		$action = $params['1'];
+		if(load($controller,APP_PATH.DS.ROOT_CONTROLLER)) {
+			$controller_name = isset($params[M]) ? $params[M] : $params['0'];
+			$xb = Xbphp::run_cache($controller_name.'Controller');
 		}
-
-		//引入控制器,并初始化控制器
-		if(!empty($action) && !empty($controller)) {
-			if(load($controller,APP_PATH.DS.ROOT_CONTROLLER)) {
-				$controller_name = isset($params[M]) ? $params[M] : $params['0'];
-				$xb = Xbphp::run_cache($controller_name.'Controller');
+		if(is_object($xb) && method_exists($xb,$action)) {
+			$request = self::replaceArr(array($controller_name,$action),'',$params);
+			$request = !empty($params['params']) ? $params['params'] : $request;
+			$_GET = !empty($_GET) ? array_merge($_GET,$request) : $_GET;
+			$route = load('route.php',APP_PATH.DS.DATABASE.DS); //加载路由规则
+			if(!empty($route[rtrim($controller,'Controller.php')][$action])) {
+				$request = implode('/',$request);
+				$arr = $this->route($request,$route,$controller,$action);
+				$requestStr = isset($request[0]) ? $request[0] : '';
+				$requestArr = explode('/', $requestStr);
+				$keyArr = is_array($requestArr) ? array_diff($requestArr,$arr) : array();
+				$_GET = !empty($keyArr) ?  array_merge($_GET,array_combine($keyArr, $arr)) : array_merge($_GET,$arr);
 			}
-
-			if(isset($xb) && method_exists($xb,$action)) {
-				$flag  = true;
-				$paramArr = self::replaceArr(array($controller_name,$action),'',$params);
-				 $request = isset($params['params']) ? $params['params'] : $paramArr;
-				 $_GET = !empty($_GET) ? array_merge($_GET,$request) : $_GET;
-
-				$route = load('route.php',APP_PATH.DS.DATABASE.DS); //加载路由规则
-				if(!empty($num) && isset($route['rewirte'][rtrim($controller,'Controller.php')][$action])) {
-					$request = implode('/',$request);
-					$arr = $this->route('rewirte',$request,$route,$controller,$action);
-					$requestStr = isset($request[0]) ? $request[0] : '';
-					$requestArr = explode('/', $requestStr);
-					$keyArr = is_array($requestArr) ? array_diff($requestArr,$arr) : array();
-					$_GET = !empty($keyArr) ?  array_merge($_GET,array_combine($keyArr, $arr)) : array_merge($_GET,$arr);
-				}
-
-				//动态url规则
-				if(empty($num) && isset($route['trends'][rtrim($controller,'Controller.php')][$action])) {
-					$this->route('trends',$request,$route,$controller,$action);
-				}
-				call_user_func_array(array($xb,$action),$request);
+			$request = !empty($request) ? $request : array(); 
+			call_user_func_array(array($xb,$action),$request);
+			//打开DEUG
+			if(DEBUG) {
+				self::debug();
 			}
-		}
-		//打开DEUG
-		if(DEBUG) {
-			self::debug();
-		}
-		if(!$flag) {
+		}else{
 			load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl');
-			exit;	
+			exit;
 		}
 
 	}
@@ -86,18 +56,16 @@ class App
 	 * @param string $controller
 	 * @param string $action
 	 */
-	protected function route($op,&$request,$route,$controller,$action) {
+	protected function route(&$request,$route,$controller,$action) {
 		if(empty($request))  {
 			return '';
 		}
-		
-		$request = ($op === 'rewirte') ?  $request : http_build_query($request);
-		if(!isset($route[$op][rtrim($controller,'Controller.php')][$action])) {
+		$request = !is_array($request) ?  $request : ltrim(Xbphp::toUrl(http_build_query($request),2,array_keys($request)),'/');
+		if(!isset($route[rtrim($controller,'Controller.php')][$action])) {
 			load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl');
 		 	exit;
 		}
-
-		if(preg_match($route[$op][rtrim($controller,'Controller.php')][$action],$request,$arr)) {
+		if(preg_match($route[rtrim($controller,'Controller.php')][$action],$request,$arr)) {
 			$valueArr = isset($arr[0]) ? explode('/', $arr[0]) : array();
 			$request = array_values(array_filter(array_splice($arr,0,1)));
 			return $arr;
@@ -117,18 +85,18 @@ class App
 		if(php_sapi_name() == 'cli') {
 			return $pathinfo;
 		}
-		if(empty($pathinfo)) {
-			if(!empty($_GET) && isset($_GET[M]) && isset($_GET[A])) {
-				$pArr =array_filter(self::replaceArr(array($_GET[M],$_GET[A]),'',$_GET));
-				$params[M] = $_GET[M];
-				$params[A] = $_GET[A];
-				$params['params'] = $pArr; 
-			}
-		}else {
-			$pathinfo['rewirte'] = true;
+		if(!empty($pathinfo)) {
 			$params = $pathinfo;
+		}else {
+			$_GET[M] = !empty($_GET[M]) ? $_GET[M] : M_INDEX;
+			$_GET[A] = !empty($_GET[A]) ? $_GET[A] : A_INDEX;
+			$pArr = array();
+			$pArr =array_filter(self::replaceArr(array($_GET[M],$_GET[A]),'',$_GET));
+			$params['0'] = $_GET[M];
+			$params['1'] = $_GET[A];
+			$params['params'] = $pArr; 
 		}
-		return !empty($params) ? $params : '';
+		return $params;
 	}
 
 
