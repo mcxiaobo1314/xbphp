@@ -23,8 +23,25 @@ class view
 
 	public static $CacheData = array();
 
-	public function __construct() {
+	//模版引擎的首先字母
+	public $_first = '$';
 
+	//正则
+	private $preg = array(
+		//普通变量
+		'variable' => '\$[a-zA-Z_][a-zA-Z0-9_]*',
+		//普通变量加函数
+		'variableFun' => '\$[a-zA-Z_][a-zA-Z0-9_\|]*',
+		//数组变量加函数
+		'variableArrFun' => '\$[a-zA-Z_][a-zA-Z0-9_]*\.[a-zA-Z_][a-zA-Z0-9_\|]*',
+		//文件路径
+		'path' => '[a-zA-Z0-9_\.\/]*',
+		//文件路径的变量
+		'pathVariable'=> '\$[a-zA-Z_][a-zA-Z0-9_\.\/]*'
+	);
+
+	public function __construct() {
+		$this->tabArr = array('<?php echo ','; ?>');
 		//定义根目录
 		$this->root = ROOT.DS.APP_PATH.DS;
 		//判断是否开启smarty
@@ -197,8 +214,8 @@ class view
 		}
 		
 		//判断编译文件是否存在，或者模版文件修改时间小于编译文件修改的时间
-		//if(!is_file($tmp_path.DS.$tmp_name) || ($file_path_time > $tmp_path_time)) 
-		//{
+		if(!is_file($tmp_path.DS.$tmp_name) || ($file_path_time > $tmp_path_time)) 
+		{
 			$html = $this->cacheHtml($tmp_name,array(),$file_path);
 			$html = $this->_include($html);
 			$html = $this->_if($html);
@@ -206,7 +223,7 @@ class view
 			$html = $this->_echo($html);
 			$html = (COMPRESS == 1) ? $this->compress_html($html) : $html;
 			file_put_contents($tmp_path.DS.$tmp_name,$html);
-		//}
+		}
 		return $tmp_path.DS.$tmp_name;
 	}
 
@@ -218,7 +235,7 @@ class view
 	 * @author wave
 	 */
 	private function _echo($html) {
-		$preg = '((\$[a-zA-Z_][a-zA-Z0-9_\|]*)|(\$[a-zA-Z_][a-zA-Z0-9_]*\.[a-zA-Z_][a-zA-Z0-9_\|]*))';
+		$preg = '(('.$this->preg['variableFun'].')|('.$this->preg['variableArrFun'].'))';
 		$replaced = '/'.$this->left_delimiter.$preg.$this->right_delimiter.'/is';
 		if(!preg_match_all($replaced,$html,$arr)) {
 			return $html;
@@ -226,11 +243,11 @@ class view
 		if(!isset($arr[1]) && count($arr[1]) === 0) {
 			return $html;
 		}
-		$arr[1] = $this->_replace('$', '', $arr[1]);
+		$arr[1] = $this->_replace($this->_first, '', $arr[1]);
 		$replaceArr = array();
 		$strArr = array();
 		foreach($arr[1] as $k => $v) {
-			$replaceArr[] = $this->analyticalVariables($v);
+			$replaceArr[] = $this->analytical($v);
 		}
 		$html = $this->_replace($arr[0],$replaceArr,$html);
 		return $html;
@@ -244,7 +261,7 @@ class view
 	 * @return string
 	 * @author wave
 	 */
-	private function analyticalVariables($str,$flag = false,$phpFlag = true){
+	private function analytical($str,$flag = false,$phpFlag = true){
 		$strfun = '';
 		if(strpos($str, '|') !== false){
 			$strArr = explode('|', $str);
@@ -263,7 +280,7 @@ class view
 		if(!empty($strfun)) {
 			$str .= ')';
 		}
-		return ($phpFlag === true) ? '<?php echo '.$str.'; ?>' : $str;
+		return ($phpFlag === true) ? $this->tabArr[0].$str.$this->tabArr[1] : $str;
 	}
 
 	/**
@@ -274,7 +291,7 @@ class view
 	 * @author wave
 	 */
 	private function _include($html) {
-		$preg = 'include\s+file=\"(([a-zA-Z0-9_\.\/]*)|(\$[a-zA-Z_][a-zA-Z0-9_\.\/]*[\|]*))\"';
+		$preg = 'include\s+file=\"(('.$this->preg['path'].')|('.$this->preg['pathVariable'].'))\"';
 		//正则替换include函数
 		$replaced = '/'.$this->left_delimiter.$preg.$this->right_delimiter.'/is';
 		if(!preg_match_all($replaced,$html,$arr)){
@@ -285,10 +302,10 @@ class view
 		}
         $replaceArr = array();
         foreach($arr[1] as $val) {
-            if(strpos($val, '$') !== false) {
-                $val = $this->_replace('$', '', $val);
+            if(strpos($val, $this->_first) !== false) {
+                $val = $this->_replace($this->_first, '', $val);
                 $valArr = explode('/', $val);
-                $val = !empty($valArr[0]) ? $this->analyticalVariables($valArr[0],true,false) : $this->analyticalVariables($val,true,false); 
+                $val = !empty($valArr[0]) ? $this->analytical($valArr[0],true,false) : $this->analytical($val,true,false); 
                 $val .= !empty($valArr[1]) ? '/'.$valArr[1] : '';
             }
         	$path_str = $this->_replace('\\','/',$this->_compresFile($val)); 
@@ -306,7 +323,7 @@ class view
 	 * @author wave
 	 */
 	private function _foreach($html) {
-		$preg = 'foreach\s+item\=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s+key\=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s+val=(\$[a-zA-Z_][a-zA-Z0-9_]*)\s*';
+		$preg = 'foreach\s+item\=('.$this->preg['variable'].')\s+key\=('.$this->preg['variable'].')\s+val=('.$this->preg['variable'].')\s*';
 		$replaced_start = '/'.$this->left_delimiter.$preg.$this->right_delimiter.'/is';
 		if(!preg_match_all($replaced_start,$html,$arr,PREG_SET_ORDER)){
 		   	return $html;
@@ -320,20 +337,20 @@ class view
 	        $str = '<?php foreach(';
 	        $firstStr = '';
 	        foreach ($v as $key => $value) {
-        	   ($key !== 0) &&  $value = $this->_replace('$','',$value);
+        	   ($key !== 0) &&  $value = $this->_replace($this->_first,'',$value);
                switch ($key) {
 	                case 0:
 		                $strArr[] = $value;
 		                break;
 	                case 1:
-		                $firstStr = $this->analyticalVariables($value,false,false);
+		                $firstStr = $this->analytical($value,false,false);
 		                $str .= $firstStr.' as ';
 		                break;
 	                case 2:
-		                $str .= $this->analyticalVariables($value,false,false).' => ';
+		                $str .= $this->analytical($value,false,false).' => ';
 		                break;
 	                case 3:
-		                $str .= $this->analyticalVariables($value,false,false).' ){  ?>'; 
+		                $str .= $this->analytical($value,false,false).' ){  ?>'; 
 						$replaceArr[] = $str;
 						break;
 	            }
@@ -353,46 +370,47 @@ class view
 	 */
 
 	private function _if($html) {
-		$preg = 'if\s+(\S*)\s*([\=\>\<\!]*)\s*(\S*)\s*';
-		if(!preg_match_all('/'.$this->left_delimiter.$preg.$this->right_delimiter.'/is',$html,$arr,PREG_SET_ORDER)){
-		    return $html;
-		}
-		if(empty($arr)){
-		  return $html;
-		}
-		$listArr = array();
-		$replaceArr = array();
-		foreach ($arr as $key => $value) {
-			$str = '<?php if(';
-			foreach ($value as $k => $v) {
-			    switch ($k) {
-			      case 0:
-			        $listArr[] = $v;
-			        break;
-			    default:
-			    	if(strpos($v,'$') !== false) {
-			    		$v = $this->_replace(array('$','(',')'),'',$v);
-			    		$str .= $this->analyticalVariables($v,false,false).' ';
-			    	}else {
-			    		$str .= $v.' ';
-			    	}
-			        break;
-			    }
+		if(preg_match_all('/'.$this->left_delimiter.'if\s+(.*?)'.$this->right_delimiter.'/is', $html, $arr)) {
+			if(empty($arr[0]) || empty($arr[1]) ){
+				return $html;
 			}
-			$str .= ' ) { ?>';
-			$replaceArr[] = $str;
+			$strArr = array();
+			foreach($arr[1] as $val) {
+				if(preg_match_all('/'.$this->preg['variableArrFun'].'/is', $val, $varr)) {
+					foreach($varr[0] as $vals) {
+						$str = $this->_replace($this->_first, '', $vals);
+						$tStr = $this->_replace($this->tabArr, '', $this->analytical($str));
+						$val = substr_replace($val, $tStr, strpos($val, $vals),strlen($vals));
+					}
+				}
+				if(preg_match_all('/'.$this->preg['variableFun'].'/is', $val, $varr)) {
+					foreach($varr[0] as $vals) {
+						if($vals !== '$this'){
+							$str = $this->_replace($this->_first, '', $vals);
+							$tStr = $this->_replace($this->tabArr, '', $this->analytical($str));
+							$val = substr_replace($val, $tStr, strpos($val, $vals),strlen($vals));
+						}
+					}
+				}
+				
+				$strArr[] = '<?php if('.$val.'){ ?>';
+			}
+			$replaceArr = array(
+				're' => array(
+					$this->left_delimiter.'/if'.$this->right_delimiter,-
+					$this->left_delimiter.'else'.$this->right_delimiter
+				),
+				'data' => array(
+					'<?php } ?>',
+					'<?php }else{  ?>'
+				)
+			);
+			if(count($strArr) === count($arr[0])) {
+				$html = $this->_replace($arr[0],$strArr,$html);
+				$html = $this->_replace($replaceArr['re'],$replaceArr['data'],$html);
+			}
+			
 		}
-
-		$html = $this->_replace($listArr, $replaceArr, $html);
-		$endReArr = array(
-			$this->left_delimiter.'/if'.$this->right_delimiter,
-			$this->left_delimiter.'else'.$this->right_delimiter
-		);
-		$endArr = array(
-			'<?php } ?>',
-			'<?php }else{ ?>'
-		);
-		$html = $this->_replace($endReArr, $endArr, $html);
 		return $html;
 	}
 

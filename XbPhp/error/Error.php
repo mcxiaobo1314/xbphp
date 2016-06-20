@@ -15,9 +15,9 @@ class Error {
 		$arr = error_get_last();
 		if($arr != null) {
 			self::logs($arr);
-			$prevLine = 10;
-			$code = self::getCode($arr,$prevLine);
-			$line = $arr['line'] - $prevLine > 0 ? $arr['line'] - $prevLine+1 : 1;
+			$code = self::getCode($arr);
+			$line = $arr['line'] - 10 >= 0 ?  $arr['line'] - 10 : 0;
+			$line = $line == 0 ? $line+1 : $line;
 			$jsData = read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'js'.DS.'shCore.js');
 			$jsData .= read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'js'.DS.'shBrushPhp.js');
 			$cssData = read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'css'.DS.'shCore.css');
@@ -40,21 +40,13 @@ class Error {
  	 * @param int $nextLine 获取后几行
  	 * @author wave
  	 */
-	private static function getCode($arr,$prevLine = 3, $nextLine = 10) {
+	private static function getCode($arr) {
 		$str = '';
 		if(is_array($arr) &&  isset($arr['line']) && isset($arr['file'])) {
 			$errData = read($arr['file']);
 			$errDataArr = explode("\r\n", $errData);
-			$count = count($errDataArr);
-			if($count == 1) {
-				return $errDataArr[0];
-			}
-			if($count < ($prevLine+$nextLine)) {
-				$prevLine = ceil($count / 2);
-				$nextLine = ($count - $prevLine - 1);
-			}
-			$num = $arr['line'] - $prevLine > 0 ? $arr['line'] - $prevLine : 1;
-			for($i = $num; $i<=$arr['line']+$nextLine; $i++) {
+			$num = $arr['line'] - 10 >= 0 ?  $arr['line'] - 10 : 0;
+			for($i =$num; $i<=$arr['line']+10; $i++) {
 				if($arr['line'] - $i == 1) {
 					$str .= trim($errDataArr[$i])."\r";
 				}else {
@@ -84,15 +76,17 @@ class Error {
 		switch (ERROR) {
 			case '0':
 				error_reporting(0);
+				register_shutdown_function('Error::message');
 				break;
 			case '1':
 				error_reporting(E_WARNING | E_NOTICE);
+				register_shutdown_function('Error::message');
 				break;
 			case '2':
 				error_reporting(E_ALL);
+				register_shutdown_function('Error::message');
 				break; 
 		}
-		register_shutdown_function('Error::message');
 	}
 
 
