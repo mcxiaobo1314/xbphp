@@ -88,6 +88,9 @@
 	 * @author wave
 	 */
 	public function __destruct() {
+		if(EXTENSION == 1) {
+			$this->colse(self::$link);
+		}
 		unset($this->params);
 	}
 
