@@ -50,7 +50,6 @@ class App
 
 	/**
 	 * 设置路由规则
-	 * @param string $op 
 	 * @param Array $request 请求的参数
 	 * @param Array $route 路由
 	 * @param string $controller
@@ -82,9 +81,6 @@ class App
 	 */
 	protected static function getUrl() {
 		$pathinfo  = Xbphp::getServerUrl();
-		if(php_sapi_name() == 'cli') {
-			return $pathinfo;
-		}
 		if(!empty($pathinfo)) {
 			$params = $pathinfo;
 		}else {
@@ -124,6 +120,10 @@ class App
 		if(isset($arr) && !empty($params)) {
 			return array_filter(str_replace($arr,$rArr, $params));
 		}
+	}
+
+	public function __destruct(){
+		unset(Xbphp::$init);
 	}
 }
 

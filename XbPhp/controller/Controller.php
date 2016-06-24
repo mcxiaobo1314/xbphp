@@ -246,4 +246,8 @@ class Controller {
 	}
 
 	protected function _initialize() {}
+
+	public function __destruct(){
+		unset($this->request);
+	}
 }
