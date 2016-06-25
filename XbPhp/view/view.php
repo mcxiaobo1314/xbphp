@@ -66,7 +66,6 @@ class view
 	 * @author wave
 	 */
 	public function __unset($key) {
-
 		unset($this->{$key});
 	}
 
@@ -77,8 +76,7 @@ class view
 	 * @author wave
 	 */
 	public function assign($key,$val) {
-
-		if(isset($key) && !empty($key) && !empty($val)) {
+		if(isset($key) && !empty($key)) {
 			$this->_value[$key] = $val;
 		}
 	}
@@ -500,5 +498,9 @@ class view
 		return $arr['0'].DS.$arr['1'];
 	}
 
+
+	public function __destruct(){
+		
+	}
 
 }
