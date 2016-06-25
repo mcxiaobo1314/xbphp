@@ -100,7 +100,6 @@ function read($path,$m ='r',$size=1024) {
 			$val .= fgets($fp);
 		}
 		fclose($fp);
-		clearstatcache();//清除文件缓存
 		return $val;
 	}
 }
@@ -191,4 +190,15 @@ function change_model($model, &$model_tem) {
 		}
 	}
 	return $model;
+}
+
+
+function readCache($path) {
+	ob_start();
+	if(file_exists($path)) {
+		require $path;
+		$content = ob_get_contents();
+	}
+	ob_clean();
+	return $content;
 }

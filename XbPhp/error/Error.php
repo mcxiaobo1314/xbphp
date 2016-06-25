@@ -20,14 +20,14 @@ class Error {
 			$line = $line == 0 ? $line+1 : $line;
 			$js = ROOT.DS.APP_PATH.DS.'webroot'.DS.md5('shCore.js,shBrushPhp.js').'.js';
 			if(!file_exists($js)) {
-				$jsData = read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'js'.DS.'shCore.js');
-				$jsData .= read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'js'.DS.'shBrushPhp.js');
+				$jsData = readCache(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'js'.DS.'shCore.js');
+				$jsData .= readCache(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'js'.DS.'shBrushPhp.js');
 				file_put_contents($js, $jsData);
 			}
 			$css = ROOT.DS.APP_PATH.DS.'webroot'.DS.md5('shCore.css,shThemeDefault.css').'.css';
 			if(!file_exists($css)) {
-				$cssData = read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'css'.DS.'shCore.css');
-				$cssData .= read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'css'.DS.'shThemeDefault.css');
+				$cssData = readCache(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'css'.DS.'shCore.css');
+				$cssData .= readCache(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'css'.DS.'shThemeDefault.css');
 				file_put_contents($css, $cssData);
 			}
 			switch (ERROR) {

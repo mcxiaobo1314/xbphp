@@ -116,7 +116,7 @@ class Xbphp  {
 	 */
 	public static function getFistUrl() {
 		$param = self::getServerUrl();
-		$url = $_SERVER['HTTP_HOST'];
+		$url = ltrim($_SERVER['HTTP_HOST'],'/');
 		$REQUEST_URI = ltrim($_SERVER['REQUEST_URI'],'/');
 		if(!empty($REQUEST_URI) && strpos($REQUEST_URI, '.') !== false){
 			$REQUEST_URI = str_replace(basename($REQUEST_URI),'',$REQUEST_URI);
@@ -129,8 +129,9 @@ class Xbphp  {
 			$url = substr_replace($url, '', strpos($url, '?'));
 		} 
 		$url = str_replace($param, '', $url);
-		define('__URL__','http://'.str_replace("//", "/", $url));
-		define('__URL_PATH__',__URL__.APP_PATH.'/webroot/');
+		$url = str_replace('//', '/',  $url);
+		define('__URL__','http://'.ltrim(str_replace('///', "/", $url),'/'));
+		define('__URL_PATH__',ltrim(__URL__,'/').APP_PATH.'/webroot/');
 	}
 
 	/**
