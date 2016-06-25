@@ -131,7 +131,7 @@ class Xbphp  {
 		$url = str_replace($param, '', $url);
 		$url = str_replace(APP_PATH, '',  $url);
 		$url = str_replace('//', '/',  $url);
-		define('__URL__','http://'.ltrim(str_replace('///', "/", $url),'/'));
+		define('__URL__','http://'.ltrim(str_replace('//', "/", $url),'/'));
 		define('__URL_PATH__',ltrim(__URL__,'/').APP_PATH.'/webroot/');
 	}
 
