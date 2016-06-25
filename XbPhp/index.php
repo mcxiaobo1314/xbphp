@@ -3,7 +3,6 @@
  * 入口文件
  * @author wave
  */
-
 if(version_compare(PHP_VERSION,'5.2.0') < 0) {
 	die('您的PHP版本低于5.2.0,请下载5.2.0以上的版本');
 }
@@ -17,7 +16,7 @@ $root_path = 'home';
  */	
 define('ROOT',str_replace('\\','/', dirname(dirname(__FILE__))));//跟目录
 define('ROOT_PATH',basename(dirname(__FILE__)));            //框架名
-define('DS',str_replace('\\','/', DIRECTORY_SEPARATOR));   						//定义斜杠
+define('DS',str_replace('\\','/', DIRECTORY_SEPARATOR));   	//定义斜杠
 define('DATABASE','databases');                           	//数据库连接文件路径
 define('ROOT_CONF','conf');                           		//系統公用配置文件路徑
 define('ROOT_MODEL','model');                             	//模型文件的路径
@@ -44,11 +43,14 @@ if(!defined('APP_PATH') || APP_PATH == NULL) {
 	define('APP_PATH',$root_path);
 }
 
+
 //判断目录是否存在
 if(!defined('APP_PATH') || !file_exists(ROOT.DS.APP_PATH.DS)) {
 	load('404.tpl',ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'); 
 	exit;
 }
+
+Xbphp::getFistUrl();
 
 //如果加载自定义配置文件不成功，则加载系统默认的配置文件
 if(!load('configure.inc.php',APP_PATH.DS.DATABASE.DS)) {

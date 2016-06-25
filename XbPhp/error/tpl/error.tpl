@@ -16,11 +16,10 @@ h1{ font-size: 28px; line-height: 48px; }
 .info .text{ line-height: 24px; }
 .copyright{ padding: 12px 48px; color: #999; text-align: right; font-size: 16px; }
 .copyright a{ color: #000; text-decoration: none; font-size: 16px; }
-
-<?php  echo $cssData;?>
 </style>
+<link rel="stylesheet" href="<?php  echo __URL_PATH__.md5("shCore.css,shThemeDefault.css").'.css'; ?>">
+<script type="text/javascript" src="<?php echo __URL_PATH__.md5('shCore.js,shBrushPhp.js').'.js'; ?>"></script>
 <script>
-<?php  echo $jsData;?>
 SyntaxHighlighter.all();
 SyntaxHighlighter.defaults['toolbar'] = false;
 SyntaxHighlighter.defaults['smart-tabs'] = false;

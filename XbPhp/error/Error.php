@@ -18,16 +18,24 @@ class Error {
 			$code = self::getCode($arr);
 			$line = $arr['line'] - 10 >= 0 ?  $arr['line'] - 10 : 0;
 			$line = $line == 0 ? $line+1 : $line;
-			$jsData = read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'js'.DS.'shCore.js');
-			$jsData .= read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'js'.DS.'shBrushPhp.js');
-			$cssData = read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'css'.DS.'shCore.css');
-			$cssData .= read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'css'.DS.'shThemeDefault.css');
+			$js = ROOT.DS.APP_PATH.DS.'webroot'.DS.md5('shCore.js,shBrushPhp.js').'.js';
+			if(!file_exists($js)) {
+				$jsData = read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'js'.DS.'shCore.js');
+				$jsData .= read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'js'.DS.'shBrushPhp.js');
+				file_put_contents($js, $jsData);
+			}
+			$css = ROOT.DS.APP_PATH.DS.'webroot'.DS.md5('shCore.css,shThemeDefault.css').'.css';
+			if(!file_exists($css)) {
+				$cssData = read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'css'.DS.'shCore.css');
+				$cssData .= read(ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'css'.DS.'shThemeDefault.css');
+				file_put_contents($css, $cssData);
+			}
 			switch (ERROR) {
-				case '1':
-					require ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'error.tpl';
-					break;
 				case '0':
 					self::show();
+					break;
+				default:
+					require ROOT.DS.ROOT_PATH.DS.ROOT_ERROR.DS.'tpl'.DS.'error.tpl';
 					break;
 			}
 		}

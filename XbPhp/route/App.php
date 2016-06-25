@@ -22,7 +22,7 @@ class App
 			$controller_name = isset($params[M]) ? $params[M] : $params['0'];
 			$xb = Xbphp::run_cache($controller_name.'Controller');
 		}
-		if(is_object($xb) && method_exists($xb,$action)) {
+		if(isset($xb) && method_exists($xb,$action)) {
 			$request = self::replaceArr(array($controller_name,$action),'',$params);
 			$request = !empty($params['params']) ? $params['params'] : $request;
 			$_GET = !empty($_GET) ? array_merge($_GET,$request) : $_GET;

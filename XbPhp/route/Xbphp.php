@@ -112,6 +112,28 @@ class Xbphp  {
 	}
 
 	/**
+	 * 定义URL
+	 */
+	public static function getFistUrl() {
+		$param = self::getServerUrl();
+		$url = $_SERVER['HTTP_HOST'];
+		$REQUEST_URI = ltrim($_SERVER['REQUEST_URI'],'/');
+		if(!empty($REQUEST_URI) && strpos($REQUEST_URI, '.') !== false){
+			$REQUEST_URI = str_replace(basename($REQUEST_URI),'',$REQUEST_URI);
+			$REQUEST_URI = str_replace('//', '/', $REQUEST_URI);
+		}
+		if($REQUEST_URI != '/' || empty($REQUEST_URI)) {
+			$url .= DS.$REQUEST_URI;
+		}
+		if(strpos($url, '?') !== false) {
+			$url = substr_replace($url, '', strpos($url, '?'));
+		} 
+		$url = str_replace($param, '', $url);
+		define('__URL__','http://'.str_replace("//", "/", $url));
+		define('__URL_PATH__',__URL__.APP_PATH.'/webroot/');
+	}
+
+	/**
 	 * 获取框架加载完成的消耗的内存
 	 * @return int
 	 * @author wave
