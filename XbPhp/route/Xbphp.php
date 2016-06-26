@@ -115,24 +115,30 @@ class Xbphp  {
 	 * 定义URL
 	 */
 	public static function getFistUrl() {
+		$param = array();
 		$param = self::getServerUrl();
-		$url = ltrim($_SERVER['HTTP_HOST'],'/');
+		$param = !empty($param) ? implode('/', $param) : array();
+		$url = (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == '443') ? 'https://' : 'http://';
+		$url .= $_SERVER['HTTP_HOST'];
 		$REQUEST_URI = ltrim($_SERVER['REQUEST_URI'],'/');
+		$param = self::getServerUrl();
 		if(!empty($REQUEST_URI) && strpos($REQUEST_URI, '.') !== false){
 			$REQUEST_URI = str_replace(basename($REQUEST_URI),'',$REQUEST_URI);
-			$REQUEST_URI = str_replace('//', '/', $REQUEST_URI);
 		}
-		if($REQUEST_URI != '/' || empty($REQUEST_URI)) {
-			$url .= DS.$REQUEST_URI;
-		}
+		$REQUEST_URI =str_replace('/', '', str_replace($param, '', $REQUEST_URI));
+		$url .= DS.$REQUEST_URI;
 		if(strpos($url, '?') !== false) {
 			$url = substr_replace($url, '', strpos($url, '?'));
 		} 
-		$url = str_replace($param, '', $url);
 		$url = str_replace(APP_PATH, '',  $url);
-		$url = str_replace('//', '/',  $url);
-		define('__URL__','http://'.ltrim(str_replace('//', "/", $url),'/'));
-		define('__URL_PATH__',ltrim(__URL__,'/').APP_PATH.'/webroot/');
+		if($url[strlen($url)-1] == '/'){
+			define('__URL__',$url);
+			define('__URL_APP_PATH__',$url.APP_PATH.DS);
+		}else {
+			define('__URL__',$url.DS);
+			define('__URL_APP_PATH__',$url.DS.APP_PATH.DS);
+		}
+		define('__URL_PATH__',__URL_APP_PATH__.'webroot/');
 	}
 
 	/**
