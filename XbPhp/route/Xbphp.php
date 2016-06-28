@@ -130,8 +130,8 @@ class Xbphp  {
 		if(strpos($url, '?') !== false) {
 			$url = substr_replace($url, '', strpos($url, '?'));
 		} 
-		$url = str_replace(APP_PATH, '',  $url);
-		if($url[strlen($url)-1] == '/'){
+		$url = substr_replace($url,'', strpos($url, APP_PATH));
+		if(isset($url[strlen($url)-1])  &&  $url[strlen($url)-1] == '/'){
 			define('__URL__',$url);
 			define('__URL_APP_PATH__',$url.APP_PATH.DS);
 		}else {
