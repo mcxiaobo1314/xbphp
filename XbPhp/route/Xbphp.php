@@ -122,10 +122,19 @@ class Xbphp  {
 		$url .= $_SERVER['HTTP_HOST'];
 		$REQUEST_URI = ltrim($_SERVER['REQUEST_URI'],'/');
 		$param = self::getServerUrl();
-		if(!empty($REQUEST_URI) && strpos($REQUEST_URI, '.') !== false){
-			$REQUEST_URI = str_replace(basename($REQUEST_URI),'',$REQUEST_URI);
+		if(strpos($REQUEST_URI, '/') === false) {
+			$REQUEST_URI = DS.$REQUEST_URI;
 		}
-		$REQUEST_URI =str_replace('/', '', str_replace($param, '', $REQUEST_URI));
+		if(!empty($REQUEST_URI) && strpos($REQUEST_URI, '.') !== false){
+			$REQUEST_URI = substr_replace($REQUEST_URI, '', strpos($REQUEST_URI, '.'));
+		}
+		$REQUEST_URI =str_replace($param, '', $REQUEST_URI);
+		if(!empty($REQUEST_URI) && strpos($REQUEST_URI, '/') !== false){
+			$REQUEST_URI = substr_replace($REQUEST_URI, '', strpos($REQUEST_URI, '/'));
+		}
+		if(isset($_GET['txt']) &&  $_GET['txt'] == 1) {
+			var_dump($REQUEST_URI);
+		}
 		$url .= DS.$REQUEST_URI;
 		if(strpos($url, '?') !== false) {
 			$url = substr_replace($url, '', strpos($url, '?'));
