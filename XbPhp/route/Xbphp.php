@@ -132,9 +132,6 @@ class Xbphp  {
 		if(!empty($REQUEST_URI) && strpos($REQUEST_URI, '/') !== false){
 			$REQUEST_URI = substr_replace($REQUEST_URI, '', strpos($REQUEST_URI, '/'));
 		}
-		if(isset($_GET['txt']) &&  $_GET['txt'] == 1) {
-			var_dump($REQUEST_URI);
-		}
 		$url .= DS.$REQUEST_URI;
 		if(strpos($url, '?') !== false) {
 			$url = substr_replace($url, '', strpos($url, '?'));
